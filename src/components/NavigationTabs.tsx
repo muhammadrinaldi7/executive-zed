@@ -6,6 +6,7 @@ import {
   Tag,
   ShieldAlert,
   BadgePercent,
+  FolderKanban,
 } from 'lucide-react';
 
 interface NavigationTabsProps {
@@ -58,6 +59,12 @@ export const NavigationTabs: React.FC<NavigationTabsProps> = ({
       label: 'Klaim Promo & Subsidi',
       sublabel: 'Program Diskon Toko',
       icon: BadgePercent,
+    },
+    {
+      id: 'projects',
+      label: 'Penjualan per Proyek',
+      sublabel: 'Matriks & Klasifikasi',
+      icon: FolderKanban,
     },
   ];
 

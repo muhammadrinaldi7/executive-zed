@@ -16,6 +16,8 @@ import type {
   BrandAnalyticsData,
   CashierAuditData,
   PromoClaimsData,
+  ProjectSalesReportResponse,
+  ProjectSalesDetailItem,
 } from '../types';
 
 export const executiveApi = {
@@ -191,6 +193,31 @@ export const executiveApi = {
    */
   async getPromoClaims(params?: FilterParams) {
     const response = await apiClient.get<ApiResponse<PromoClaimsData>>('/promo-claims', {
+      params,
+    });
+    return response.data;
+  },
+  /**
+   * Get Project Sales Matrix & Breakdown report.
+   */
+  async getProjectSales(params?: FilterParams) {
+    const response = await apiClient.get<ApiResponse<ProjectSalesReportResponse>>('/project-sales', {
+      params,
+    });
+    return response.data;
+  },
+
+  /**
+   * Get Project Sales Drilldown items.
+   */
+  async getProjectSalesDetail(params: {
+    date?: string;
+    project?: string;
+    search?: string;
+    branch?: string | null;
+    business_unit_id?: number | string | null;
+  }) {
+    const response = await apiClient.get<ApiResponse<ProjectSalesDetailItem[]>>('/project-sales/detail', {
       params,
     });
     return response.data;

@@ -173,7 +173,7 @@ export interface AiChatResponse {
 
 // ─── NEW EXECUTIVE MODULE TYPES ──────────────────────────────────
 
-export type ExecutiveTab = 'overview' | 'staff' | 'brands' | 'audit' | 'promos';
+export type ExecutiveTab = 'overview' | 'staff' | 'brands' | 'audit' | 'promos' | 'projects';
 
 export interface SalesPersonKpi {
   rank: number;
@@ -320,3 +320,83 @@ export interface PromoClaimsData {
   recent_claims: PromoClaimRowItem[];
 }
 
+
+// ─── PROJECT SALES REPORT TYPES ────────────────────────────────────────────────
+
+export interface ProjectMatrixCell {
+  nominal: number;
+  qty: number;
+  count?: number;
+  hpp?: number;
+  profit?: number;
+}
+
+export interface ProjectMatrixDate {
+  raw: string;
+  display: string;
+  day_name: string;
+}
+
+export interface ProjectBreakdownItem {
+  project: string;
+  net_sales: number;
+  total_qty: number;
+  total_hpp: number;
+  gross_profit: number;
+  margin_percentage: number;
+  contribution_percentage: number;
+  orders_count: number;
+}
+
+export interface ProjectSalesGrandTotal {
+  nominal: number;
+  qty: number;
+  hpp: number;
+  profit: number;
+}
+
+export interface ProjectSalesReportResponse {
+  period: {
+    range: string;
+    start_date: string;
+    end_date: string;
+    total_days: number;
+  };
+  summary: {
+    total_net_sales: number;
+    total_qty: number;
+    total_hpp: number;
+    gross_profit: number;
+    profit_margin: number;
+    total_projects_count: number;
+    daily_average_sales: number;
+    daily_average_qty: number;
+  };
+  project_breakdown: ProjectBreakdownItem[];
+  columns: string[];
+  dates: ProjectMatrixDate[];
+  matrix: Record<string, Record<string, ProjectMatrixCell>>;
+  row_totals: Record<string, { nominal: number; qty: number; profit: number }>;
+  column_totals: Record<string, { nominal: number; qty: number; profit: number }>;
+  grand_total: ProjectSalesGrandTotal;
+  available_projects: string[];
+}
+
+export interface ProjectSalesDetailItem {
+  order_number: string;
+  invoice_no: string;
+  time: string;
+  customer_name: string;
+  sales_name: string;
+  handled_by: string;
+  branch: string;
+  project: string;
+  product_name: string;
+  sku: string;
+  serial_number: string;
+  qty: number;
+  price: number;
+  discount: number;
+  subtotal: number;
+  payment_method: string;
+}

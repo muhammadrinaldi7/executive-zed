@@ -10,6 +10,7 @@ import { StaffKpiTab } from '../components/tabs/StaffKpiTab';
 import { BrandAnalyticsTab } from '../components/tabs/BrandAnalyticsTab';
 import { CashierAuditTab } from '../components/tabs/CashierAuditTab';
 import { PromoClaimsTab } from '../components/tabs/PromoClaimsTab';
+import { ProjectSalesTab } from '../components/tabs/ProjectSalesTab';
 import { AiAssistantDrawer } from '../components/AiAssistantDrawer';
 import { PrintReportHeader } from '../components/PrintReportHeader';
 import { PrintReportFooter } from '../components/PrintReportFooter';
@@ -125,6 +126,8 @@ export const DashboardPage: React.FC = () => {
         {activeTab === 'audit' && <CashierAuditTab />}
 
         {activeTab === 'promos' && <PromoClaimsTab />}
+
+        {activeTab === 'projects' && <ProjectSalesTab />}
 
         {/* Printable Official Document Signatures (Visible only on print/PDF) */}
         <PrintReportFooter />
