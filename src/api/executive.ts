@@ -185,6 +185,7 @@ export const executiveApi = {
     const response = await apiClient.get<ApiResponse<CashierAuditData>>('/cashier-audit', {
       params,
     });
+    console.log("DAPET", response.data)
     return response.data;
   },
 

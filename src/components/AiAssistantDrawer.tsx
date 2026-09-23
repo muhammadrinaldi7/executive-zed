@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import ReactMarkdown from 'react-markdown';
+import { MarkdownRenderer } from './MarkdownRenderer';
 import { executiveApi } from '../api/executive';
 import { useFilter } from '../context/FilterContext';
 import type { AiChatMessage, DashboardOverviewData } from '../types';
@@ -13,6 +13,8 @@ import {
   Check,
   RotateCcw,
   Zap,
+  Maximize2,
+  Minimize2,
 } from 'lucide-react';
 
 interface AiAssistantDrawerProps {
@@ -34,6 +36,7 @@ export const AiAssistantDrawer: React.FC<AiAssistantDrawerProps> = ({ overviewDa
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [copiedIdx, setCopiedIdx] = useState<number | null>(null);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const sessionId = 'exec-drawer-session';
@@ -184,7 +187,7 @@ export const AiAssistantDrawer: React.FC<AiAssistantDrawerProps> = ({ overviewDa
 
       {/* Slide-over Drawer */}
       <div
-        className={`no-print fixed top-0 right-0 h-full w-full sm:w-[440px] bg-slate-950/95 border-l border-slate-800/90 backdrop-blur-2xl z-50 flex flex-col shadow-2xl transition-transform duration-300 ease-in-out ${
+        className={`no-print fixed top-0 right-0 h-full w-full ${isExpanded ? 'sm:w-[780px] md:w-[860px]' : 'sm:w-[480px]'} bg-slate-950/95 transition-all duration-300 border-l border-slate-800/90 backdrop-blur-2xl z-50 flex flex-col shadow-2xl transition-transform duration-300 ease-in-out ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
@@ -211,6 +214,13 @@ export const AiAssistantDrawer: React.FC<AiAssistantDrawerProps> = ({ overviewDa
           </div>
 
           <div className="flex items-center gap-1">
+            <button
+              onClick={() => setIsExpanded(!isExpanded)}
+              title={isExpanded ? "Perkecil ukuran drawer" : "Perlebar ukuran drawer"}
+              className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer hidden sm:flex items-center justify-center"
+            >
+              {isExpanded ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+            </button>
             <button
               onClick={handleClearHistory}
               title="Bersihkan riwayat percakapan"
@@ -260,7 +270,7 @@ export const AiAssistantDrawer: React.FC<AiAssistantDrawerProps> = ({ overviewDa
                 )}
 
                 <div
-                  className={`max-w-[85%] rounded-2xl p-3.5 relative group ${
+                  className={`${isUser ? 'max-w-[85%]' : 'max-w-full flex-1'} rounded-2xl p-3.5 relative group ${
                     isUser
                       ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/20 rounded-br-none'
                       : 'bg-slate-900/90 text-slate-200 border border-slate-800/90 rounded-bl-none'
@@ -269,9 +279,7 @@ export const AiAssistantDrawer: React.FC<AiAssistantDrawerProps> = ({ overviewDa
                   {isUser ? (
                     <p className="whitespace-pre-wrap leading-relaxed">{msg.message}</p>
                   ) : (
-                    <div className="prose prose-invert prose-xs max-w-none space-y-2 leading-relaxed">
-                      <ReactMarkdown>{msg.message}</ReactMarkdown>
-                    </div>
+                    <MarkdownRenderer content={msg.message} />
                   )}
 
                   {!isUser && (

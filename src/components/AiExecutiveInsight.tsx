@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import ReactMarkdown from 'react-markdown';
+import { MarkdownRenderer } from './MarkdownRenderer';
 import { executiveApi } from '../api/executive';
 import type { KpiResponseData, BranchMetric } from '../types';
 import { formatCurrency, formatPercent } from '../utils/formatters';
@@ -200,9 +200,7 @@ _Dihasilkan otomatis via Tokopon Zed Executive Intelligence_`;
                 <span>Kirim ke WhatsApp/Telegram</span>
               </button>
             </div>
-            <div className="prose prose-invert prose-xs max-w-none space-y-2">
-              <ReactMarkdown>{aiSummary}</ReactMarkdown>
-            </div>
+            <MarkdownRenderer content={aiSummary} />
           </div>
         </div>
       )}
