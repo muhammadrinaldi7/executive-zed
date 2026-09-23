@@ -24,7 +24,7 @@ export const PrintReportHeader: React.FC<PrintReportHeaderProps> = ({ overview }
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-black tracking-tight text-slate-900 uppercase">
-            TOKOPON ZED &bull; EXECUTIVE INTELLIGENCE
+            Zed Executive &bull; EXECUTIVE INTELLIGENCE
           </h1>
           <p className="text-xs text-slate-600 font-medium">
             PT Syihab Store / GSK Group &bull; Sistem Monitoring Kinerja Bisnis & Keuangan C-Level

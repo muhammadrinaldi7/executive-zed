@@ -63,7 +63,7 @@ export const AiExecutiveInsight: React.FC<AiExecutiveInsightProps> = ({ kpi, bra
       day: 'numeric',
     });
 
-    const waText = `*TOKOPON ZED - EXECUTIVE BRIEFING* 📊
+    const waText = `*Zed Executive - EXECUTIVE BRIEFING* 📊
 _Laporan Direksi & Intelijen Bisnis C-Level_
 📅 Tanggal: ${dateStr}
 
@@ -77,7 +77,7 @@ ${topBranch ? `• Cabang Juara: ${topBranch.branch_name} (${topBranch.contribut
 *Analisis & Rekomendasi AI (9router):*
 ${aiSummary.replace(/###?\s+/g, '*').replace(/-\s+/g, '• ')}
 
-_Dihasilkan otomatis via Tokopon Zed Executive Intelligence_`;
+_Dihasilkan otomatis via Zed Executive Executive Intelligence_`;
 
     navigator.clipboard.writeText(waText);
     setIsCopiedWa(true);

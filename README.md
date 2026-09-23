@@ -1,6 +1,6 @@
-# Tokopon Zed &bull; Executive Intelligence Suite (Frontend Standalone)
+# Zed Executive &bull; Executive Intelligence Suite (Frontend Standalone)
 
-Dashboard analitik C-Level & intelijen bisnis eksekutif independen untuk **PT Syihab Store / GSK Group (Tokopon Zed)**.
+Dashboard analitik C-Level & intelijen bisnis eksekutif independen untuk **PT Syihab Store / GSK Group (Zed Executive)**.
 
 Aplikasi ini dibangun menggunakan arsitektur **Headless / Decoupled** (Vite + React 19 + TypeScript + Tailwind CSS v4 + Recharts + Lucide Icons). Aplikasi ini 100% mandiri dan hanya terhubung ke backend Laravel melalui REST API via Bearer Token.
 

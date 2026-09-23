@@ -134,7 +134,7 @@ export const LoginPage: React.FC = () => {
 
           <div className="mt-6 pt-5 border-t border-slate-800/60 text-center">
             <p className="text-[11px] text-slate-500">
-              Hak cipta &copy; {new Date().getFullYear()} Tokopon Zed. Dilindungi protokol keamanan tingkat lanjut.
+              Hak cipta &copy; {new Date().getFullYear()} Zed Executive. Dilindungi protokol keamanan tingkat lanjut.
             </p>
           </div>
         </div>

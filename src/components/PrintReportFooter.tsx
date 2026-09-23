@@ -21,7 +21,7 @@ export const PrintReportFooter: React.FC = () => {
         </div>
       </div>
       <p className="mt-6 text-[10px] text-center text-slate-400">
-        Dokumen ini dihasilkan secara otomatis oleh Tokopon Zed Executive Intelligence System &bull; Bersifat Rahasia
+        Dokumen ini dihasilkan secara otomatis oleh Zed Executive Executive Intelligence System &bull; Bersifat Rahasia
       </p>
     </div>
   );

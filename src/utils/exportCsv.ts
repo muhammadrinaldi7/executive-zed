@@ -28,7 +28,7 @@ export function exportDashboardToCsv(overview: DashboardOverviewData, periodLabe
   const lines: string[] = [];
 
   // Header Title
-  lines.push(escapeCsv('TOKOPON ZED - LAPORAN INTELIJEN BISNIS & KINERJA DIREKSI'));
+  lines.push(escapeCsv('Zed Executive - LAPORAN INTELIJEN BISNIS & KINERJA DIREKSI'));
   lines.push(escapeCsv(`Periode: ${periodLabel} | Dicetak: ${new Date().toLocaleString('id-ID')}`));
   lines.push('');
 

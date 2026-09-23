@@ -76,7 +76,7 @@ export const AiAssistantDrawer: React.FC<AiAssistantDrawerProps> = ({ overviewDa
         {
           role: 'assistant',
           message:
-            'Halo Bapak/Ibu Direksi! Silakan ajukan pertanyaan seputar analisis omset, laba kotor, atau performa toko Tokopon Zed.',
+            'Halo Bapak/Ibu Direksi! Silakan ajukan pertanyaan seputar analisis omset, laba kotor, atau performa toko Zed Executive.',
         },
       ]);
     }

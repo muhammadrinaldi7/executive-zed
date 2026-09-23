@@ -138,7 +138,7 @@ export const DashboardPage: React.FC = () => {
 
       {/* Footer */}
       <footer className="no-print w-full border-t border-slate-900 bg-slate-950/80 py-4 px-4 text-center text-xs text-slate-500">
-        Tokopon Zed Executive Intelligence Suite &bull; Real-time C-Level Business Dashboard &bull; v1.0.0
+        Zed Executive Executive Intelligence Suite &bull; Real-time C-Level Business Dashboard &bull; v1.0.0
       </footer>
     </div>
   );

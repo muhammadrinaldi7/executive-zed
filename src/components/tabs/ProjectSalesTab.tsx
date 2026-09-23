@@ -148,7 +148,7 @@ export const ProjectSalesTab: React.FC = () => {
     if (!data) return;
 
     const lines: string[] = [];
-    lines.push(`"TOKOPON ZED - LAPORAN PENJUALAN PER PROYEK"`);
+    lines.push(`"Zed Executive - LAPORAN PENJUALAN PER PROYEK"`);
     lines.push(`"Periode: ${data.period.start_date} s/d ${data.period.end_date} (${data.period.range})"`);
     lines.push('');
 
