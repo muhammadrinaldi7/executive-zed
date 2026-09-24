@@ -3,8 +3,8 @@ import { useAuth } from '../context/AuthContext';
 import { useFilter } from '../context/FilterContext';
 import type { FilterOptions, DashboardOverviewData } from '../types';
 import { exportDashboardToCsv } from '../utils/exportCsv';
+import { ZedLogo } from './ZedLogo';
 import {
-  TrendingUp,
   RefreshCw,
   LogOut,
   Building2,
@@ -51,9 +51,7 @@ export const Header: React.FC<HeaderProps> = ({ filterOptions, isLoading, overvi
         <div className="flex items-center justify-between h-16 gap-4">
           {/* Left: Brand Identity & Intelligence Badge */}
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-emerald-400 flex items-center justify-center text-white shadow-md shadow-indigo-500/20">
-              <TrendingUp className="w-5 h-5 stroke-[2.5]" />
-            </div>
+            <ZedLogo size="md" withGlow={true} />
             <div>
               <div className="flex items-center gap-2">
                 <span className="font-extrabold text-base tracking-tight text-white">

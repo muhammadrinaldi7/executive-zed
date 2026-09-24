@@ -98,6 +98,45 @@ export const PaymentBreakdown: React.FC<PaymentBreakdownProps> = ({ payments, is
   const [selectedBank, setSelectedBank] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
 
+  // Extract unique banks available in the dataset (Hooks must be called unconditionally before early returns)
+  const availableBanks = useMemo(() => {
+    if (!payments) return [];
+    const set = new Set<string>();
+    payments.forEach((p) => {
+      const b = getBankName(p);
+      if (b && b !== '-') set.add(b);
+    });
+    return Array.from(set).sort();
+  }, [payments]);
+
+  // Apply filters unconditionally
+  const filteredPayments = useMemo(() => {
+    if (!payments) return [];
+    return payments.filter((pm) => {
+      // 1. Category filter
+      if (selectedCategory !== 'all') {
+        const cat = getPaymentCategory(pm);
+        if (cat !== selectedCategory) return false;
+      }
+
+      // 2. Bank filter
+      if (selectedBank !== 'all') {
+        const bank = getBankName(pm);
+        if (bank.toLowerCase() !== selectedBank.toLowerCase()) return false;
+      }
+
+      // 3. Search query
+      if (searchQuery.trim()) {
+        const q = searchQuery.toLowerCase();
+        const matchesName = pm.payment_method_name.toLowerCase().includes(q);
+        const matchesBank = (pm.bank_name || '').toLowerCase().includes(q);
+        if (!matchesName && !matchesBank) return false;
+      }
+
+      return true;
+    });
+  }, [payments, selectedCategory, selectedBank, searchQuery]);
+
   if (isLoading || !payments) {
     return (
       <div className="glass-card rounded-2xl p-6 border border-slate-800 animate-pulse h-full min-h-[520px] flex flex-col justify-between">
@@ -123,43 +162,6 @@ export const PaymentBreakdown: React.FC<PaymentBreakdownProps> = ({ payments, is
       </div>
     );
   }
-
-  // Extract unique banks available in the dataset
-  const availableBanks = useMemo(() => {
-    const set = new Set<string>();
-    payments.forEach((p) => {
-      const b = getBankName(p);
-      if (b && b !== '-') set.add(b);
-    });
-    return Array.from(set).sort();
-  }, [payments]);
-
-  // Apply filters
-  const filteredPayments = useMemo(() => {
-    return payments.filter((pm) => {
-      // 1. Category filter
-      if (selectedCategory !== 'all') {
-        const cat = getPaymentCategory(pm);
-        if (cat !== selectedCategory) return false;
-      }
-
-      // 2. Bank filter
-      if (selectedBank !== 'all') {
-        const bank = getBankName(pm);
-        if (bank.toLowerCase() !== selectedBank.toLowerCase()) return false;
-      }
-
-      // 3. Search query
-      if (searchQuery.trim()) {
-        const q = searchQuery.toLowerCase();
-        const matchesName = pm.payment_method_name.toLowerCase().includes(q);
-        const matchesBank = (pm.bank_name || '').toLowerCase().includes(q);
-        if (!matchesName && !matchesBank) return false;
-      }
-
-      return true;
-    });
-  }, [payments, selectedCategory, selectedBank, searchQuery]);
 
   const hasActiveFilters = selectedCategory !== 'all' || selectedBank !== 'all' || searchQuery.trim() !== '';
 

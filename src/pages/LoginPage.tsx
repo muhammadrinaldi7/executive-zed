@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { ZedLogo } from '../components/ZedLogo';
 import { ShieldCheck, Lock, Mail, AlertCircle, ArrowRight, Sparkles } from 'lucide-react';
 
 export const LoginPage: React.FC = () => {
@@ -39,8 +40,13 @@ export const LoginPage: React.FC = () => {
 
       <div className="w-full max-w-md z-10">
         {/* Brand Header */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-semibold tracking-wide uppercase mb-4 shadow-inner">
+        <div className="text-center mb-8 flex flex-col items-center">
+          {/* Executive Emblem */}
+          <div className="mb-4">
+            <ZedLogo size="lg" withGlow={true} animate={true} />
+          </div>
+
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-semibold tracking-wide uppercase mb-3 shadow-inner">
             <Sparkles className="w-3.5 h-3.5 text-indigo-400 animate-pulse" />
             Executive Intelligence Suite
           </div>

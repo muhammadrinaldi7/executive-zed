@@ -41,20 +41,6 @@ export const AiAssistantDrawer: React.FC<AiAssistantDrawerProps> = ({ overviewDa
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const sessionId = 'exec-drawer-session';
 
-  // Load chat history when drawer is opened for the first time
-  useEffect(() => {
-    if (isOpen && messages.length === 0) {
-      loadHistory();
-    }
-  }, [isOpen]);
-
-  // Auto-scroll to bottom of messages
-  useEffect(() => {
-    if (isOpen) {
-      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }
-  }, [messages, isLoading, isOpen]);
-
   const loadHistory = async () => {
     try {
       const res = await executiveApi.getAiHistory(sessionId);
@@ -81,6 +67,20 @@ export const AiAssistantDrawer: React.FC<AiAssistantDrawerProps> = ({ overviewDa
       ]);
     }
   };
+
+  // Load chat history when drawer is opened for the first time
+  useEffect(() => {
+    if (isOpen && messages.length === 0) {
+      loadHistory();
+    }
+  }, [isOpen]);
+
+  // Auto-scroll to bottom of messages
+  useEffect(() => {
+    if (isOpen) {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages, isLoading, isOpen]);
 
   const handleSendMessage = async (textToSend?: string) => {
     const message = (textToSend || inputValue).trim();
