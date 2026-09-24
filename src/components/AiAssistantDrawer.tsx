@@ -21,12 +21,86 @@ interface AiAssistantDrawerProps {
   overviewData?: DashboardOverviewData | null;
 }
 
-const QUICK_PROMPTS = [
-  'Berapa omset dan laba kotor pada periode ini?',
-  'Cabang mana yang performa margin labanya paling tipis?',
-  'Apakah ada piutang aktif yang perlu segera ditagih?',
-  'Bandingkan performa penjualan antar cabang toko.',
-  'Produk apa yang memberikan kontribusi omset tertinggi?',
+interface QuickPromptItem {
+  id: string;
+  label: string;
+  category: 'stok' | 'audit' | 'finansial';
+  prompt: string;
+  isTemplate?: boolean;
+}
+
+const CATEGORIES = [
+  { id: 'all', label: '✨ Semua Shortcut' },
+  { id: 'stok', label: '📦 Stok & Cabang' },
+  { id: 'audit', label: '🚨 Audit & Risiko' },
+  { id: 'finansial', label: '📊 Finansial' },
+] as const;
+
+const QUICK_PROMPTS: QuickPromptItem[] = [
+  // 📦 Stok & Operasional Toko
+  {
+    id: 'stok-second',
+    label: '📦 Stok HP Second (GSK)',
+    category: 'stok',
+    prompt: 'Cek stok iPhone & HP second yang tersedia di seluruh cabang GSK saat ini dan berapa harganya?',
+  },
+  {
+    id: 'stok-baru',
+    label: '🏬 Stok HP Baru (Syihab)',
+    category: 'stok',
+    prompt: 'Cek ketersediaan dan sebaran stok iPhone baru di cabang-cabang Syihab.',
+  },
+  {
+    id: 'dead-stock',
+    label: '⏳ Dead Stock (>30 Hari)',
+    category: 'stok',
+    prompt: 'Apakah ada unit HP second yang sudah mengendap lebih dari 30 hari di toko belum laku?',
+  },
+  {
+    id: 'imei-track',
+    label: '🔍 Lacak Fisik IMEI/SN',
+    category: 'stok',
+    prompt: 'Lacak IMEI [masukkan nomor seri/IMEI] ada di toko mana dan berapa harganya?',
+    isTemplate: true,
+  },
+  // 🚨 Audit & Kontrol Risiko
+  {
+    id: 'void-kasir',
+    label: '🚨 Audit Void Kasir',
+    category: 'audit',
+    prompt: 'Kasir mana yang paling banyak membatalkan nota (void), di cabang mana, dan berapa nominalnya?',
+  },
+  {
+    id: 'piutang-aktif',
+    label: '📋 Monitoring Piutang',
+    category: 'audit',
+    prompt: 'Berapa total piutang yang belum terbayar dan transaksi piutang mana saja yang perlu segera ditagih?',
+  },
+  {
+    id: 'mdr-eval',
+    label: '💳 Evaluasi Biaya MDR',
+    category: 'audit',
+    prompt: 'Metode pembayaran dan mesin EDC apa yang memakan biaya MDR paling besar pada periode ini?',
+  },
+  // 📊 Kinerja Finansial Cabang
+  {
+    id: 'margin-tipis',
+    label: '📉 Cabang Margin Rendah',
+    category: 'finansial',
+    prompt: 'Cabang mana yang performa margin laba kotornya paling tipis di bawah target perusahaan?',
+  },
+  {
+    id: 'top-sales',
+    label: '🏆 Top Salesperson',
+    category: 'finansial',
+    prompt: 'Siapa salesperson dengan pencapaian omset dan unit penjualan tertinggi saat ini?',
+  },
+  {
+    id: 'omset-laba',
+    label: '💰 Omset & Laba Kotor',
+    category: 'finansial',
+    prompt: 'Berapa total omset faktur dan laba kotor pada periode ini?',
+  },
 ];
 
 export const AiAssistantDrawer: React.FC<AiAssistantDrawerProps> = ({ overviewData }) => {
@@ -37,8 +111,10 @@ export const AiAssistantDrawer: React.FC<AiAssistantDrawerProps> = ({ overviewDa
   const [isLoading, setIsLoading] = useState(false);
   const [copiedIdx, setCopiedIdx] = useState<number | null>(null);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [activeCategory, setActiveCategory] = useState<'all' | 'stok' | 'audit' | 'finansial'>('all');
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const sessionId = 'exec-drawer-session';
 
   const loadHistory = async () => {
@@ -52,7 +128,7 @@ export const AiAssistantDrawer: React.FC<AiAssistantDrawerProps> = ({ overviewDa
           {
             role: 'assistant',
             message:
-              'Halo Bapak/Ibu Direksi! Saya **Zed Executive Intelligence AI**, terhubung langsung dengan gateway **9router**.\n\nSaya telah memuat data bisnis dan metrik aktif di dashboard. Anda dapat bertanya tentang omset, laba, efisiensi cabang, atau meminta analisis strategis kapan saja.',
+              'Halo Bapak/Ibu Direksi! Saya **Zed Executive Intelligence AI**.\n\nSaya telah terhubung langsung dengan **database inventaris realtime, stok fisik cabang, IMEI, serta metrik keuangan Tokopon Zed**.\n\nAnda dapat menanyakan hal strategis (omset, margin, kasir void) maupun operasional toko fisik (stok HP baru/second, sebaran cabang, atau lacak IMEI).',
           },
         ]);
       }
@@ -62,7 +138,7 @@ export const AiAssistantDrawer: React.FC<AiAssistantDrawerProps> = ({ overviewDa
         {
           role: 'assistant',
           message:
-            'Halo Bapak/Ibu Direksi! Silakan ajukan pertanyaan seputar analisis omset, laba kotor, atau performa toko Zed Executive.',
+            'Halo Bapak/Ibu Direksi! Silakan ajukan pertanyaan seputar analisis omset, laba kotor, performa cabang, atau cek stok barang Tokopon Zed.',
         },
       ]);
     }
@@ -136,6 +212,22 @@ export const AiAssistantDrawer: React.FC<AiAssistantDrawerProps> = ({ overviewDa
     }
   };
 
+  const handleChipClick = (item: QuickPromptItem) => {
+    if (item.isTemplate) {
+      setInputValue(item.prompt);
+      setTimeout(() => {
+        inputRef.current?.focus();
+        const start = item.prompt.indexOf('[');
+        const end = item.prompt.indexOf(']') + 1;
+        if (start !== -1 && end > start) {
+          inputRef.current?.setSelectionRange(start, end);
+        }
+      }, 50);
+    } else {
+      handleSendMessage(item.prompt);
+    }
+  };
+
   const handleClearHistory = async () => {
     if (!window.confirm('Bersihkan riwayat percakapan sesi ini?')) return;
     try {
@@ -160,6 +252,10 @@ export const AiAssistantDrawer: React.FC<AiAssistantDrawerProps> = ({ overviewDa
   const activePeriodLabel = filters.date_range?.replace('_', ' ').toUpperCase() || 'BULAN INI';
   const activeBranchLabel = filters.branch || 'Semua Cabang';
 
+  const filteredPrompts = activeCategory === 'all'
+    ? QUICK_PROMPTS
+    : QUICK_PROMPTS.filter((p) => p.category === activeCategory);
+
   return (
     <>
       {/* Floating Action Button (FAB) */}
@@ -173,7 +269,7 @@ export const AiAssistantDrawer: React.FC<AiAssistantDrawerProps> = ({ overviewDa
           <Bot className="w-5 h-5 text-white" />
           <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-emerald-400 rounded-full border-2 border-slate-900 animate-pulse" />
         </div>
-        <span className="tracking-wide">AI Direksi</span>
+        <span className="tracking-wide">AI Eksekutif & Operasional</span>
         <Sparkles className="w-3.5 h-3.5 text-amber-300 animate-spin-slow" />
       </button>
 
@@ -200,15 +296,15 @@ export const AiAssistantDrawer: React.FC<AiAssistantDrawerProps> = ({ overviewDa
             <div>
               <div className="flex items-center gap-2">
                 <h3 className="text-sm font-bold text-white tracking-tight">
-                  Zed Executive AI
+                  Zed Executive Intelligence AI
                 </h3>
                 <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 uppercase">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                  9router
+                  Live Sync
                 </span>
               </div>
               <p className="text-[10px] text-slate-400">
-                Intelijen Bisnis Real-time untuk Direksi
+                Laporan Strategis & Inventaris Fisik Cabang
               </p>
             </div>
           </div>
@@ -312,7 +408,7 @@ export const AiAssistantDrawer: React.FC<AiAssistantDrawerProps> = ({ overviewDa
                   <span className="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
                   <span className="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
                 </div>
-                <span className="text-[11px] text-slate-400">Menganalisis data via 9router...</span>
+                <span className="text-[11px] text-slate-400">Menganalisis data & inventaris realtime...</span>
               </div>
             </div>
           )}
@@ -320,22 +416,46 @@ export const AiAssistantDrawer: React.FC<AiAssistantDrawerProps> = ({ overviewDa
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Quick Suggestion Prompts */}
-        <div className="px-4 py-2 border-t border-slate-800/80 bg-slate-900/40">
-          <div className="text-[10px] uppercase font-semibold text-slate-400 mb-1.5">
-            Pertanyaan Rekomendasi
-          </div>
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none w-full min-w-0">
-            {QUICK_PROMPTS.map((prompt, idx) => (
+        {/* Quick Suggestion Prompts with Smart Categories */}
+        <div className="px-4 py-2.5 border-t border-slate-800/80 bg-slate-900/60">
+          {/* Category Tabs */}
+          <div className="flex items-center gap-1.5 mb-2 overflow-x-auto pb-1 scrollbar-none">
+            {CATEGORIES.map((cat) => (
               <button
-                key={idx}
-                onClick={() => handleSendMessage(prompt)}
-                disabled={isLoading}
-                className="px-2.5 py-1 rounded-lg bg-slate-800/80 hover:bg-indigo-600 hover:text-white border border-slate-700/60 text-slate-300 text-[11px] shrink-0 transition-colors cursor-pointer disabled:opacity-50"
+                key={cat.id}
+                onClick={() => setActiveCategory(cat.id as any)}
+                className={`px-2 py-0.5 rounded-full text-[10px] font-semibold shrink-0 transition-all cursor-pointer ${
+                  activeCategory === cat.id
+                    ? 'bg-indigo-600 text-white shadow-sm shadow-indigo-600/30'
+                    : 'bg-slate-800/70 text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+                }`}
               >
-                {prompt}
+                {cat.label}
               </button>
             ))}
+          </div>
+
+          {/* Prompt Action Chips */}
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none w-full min-w-0">
+            {filteredPrompts.map((item) => {
+              const themeClass =
+                item.category === 'stok'
+                  ? 'bg-emerald-950/40 hover:bg-emerald-600/90 text-emerald-300 hover:text-white border-emerald-700/40'
+                  : item.category === 'audit'
+                  ? 'bg-amber-950/40 hover:bg-amber-600/90 text-amber-300 hover:text-white border-amber-700/40'
+                  : 'bg-indigo-950/40 hover:bg-indigo-600/90 text-indigo-300 hover:text-white border-indigo-700/40';
+
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => handleChipClick(item)}
+                  disabled={isLoading}
+                  className={`px-2.5 py-1 rounded-lg border text-[11px] font-medium shrink-0 transition-all cursor-pointer disabled:opacity-50 ${themeClass}`}
+                >
+                  {item.label}
+                </button>
+              );
+            })}
           </div>
         </div>
 
@@ -349,10 +469,11 @@ export const AiAssistantDrawer: React.FC<AiAssistantDrawerProps> = ({ overviewDa
             className="flex items-center gap-2"
           >
             <input
+              ref={inputRef}
               type="text"
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
-              placeholder="Tanyakan analisis bisnis direksi..."
+              placeholder="Tanyakan stok HP, lacak IMEI, atau analisis omset cabang..."
               disabled={isLoading}
               className="flex-1 min-w-0 px-3.5 py-2.5 bg-slate-950 border border-slate-700/80 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
             />

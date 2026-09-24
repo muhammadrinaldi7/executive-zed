@@ -9,11 +9,108 @@ interface MarkdownRendererProps {
 
 export const normalizeMarkdown = (text: string): string => {
   if (!text) return '';
-  // 1. Ensure table starts on its own paragraph (requires blank line before the table)
-  let formatted = text.replace(/([^\n])\n(\|[^\n]+\|)/g, '$1\n\n$2');
-  // 2. If newlines were collapsed into spaces between table rows (e.g. "| ... | | ... |"), restore newlines
-  formatted = formatted.replace(/\|\s*\|\s*([0-9A-Za-z#\-\:\*])/g, '|\n| $1');
-  return formatted;
+
+  const rawLines = text.split('\n');
+  const processedLines: string[] = [];
+  let inCodeBlock = false;
+
+  for (let i = 0; i < rawLines.length; i++) {
+    let line = rawLines[i];
+    const trimmed = line.trim();
+
+    if (trimmed.startsWith('```')) {
+      inCodeBlock = !inCodeBlock;
+      processedLines.push(line);
+      continue;
+    }
+
+    if (inCodeBlock) {
+      processedLines.push(line);
+      continue;
+    }
+
+    // Step 1: Clean up multi-pipe artifacts at the very beginning of lines (e.g. "|| iPhone 17" -> "| iPhone 17")
+    line = line.replace(/^\|{2,}\s*/g, '| ');
+
+    // Step 2: Convert collapsed row separators into proper line breaks
+    // When LLM glues rows together like: "... | | | iPhone 15 ..." or "... ||| iPhone 15 ..."
+    line = line.replace(/\|\s*\|\s*\|\s*/g, '|\n| ');
+    line = line.replace(/\|\s*\|\s*([0-9A-Za-z#\-\:\*\—\–\w])/g, '|\n| $1');
+    line = line.replace(/\|{2,}\s*/g, '|\n| ');
+
+    // If multiple lines were created by Step 2, split and handle each
+    const subLines = line.split('\n');
+    for (const sub of subLines) {
+      let subTrimmed = sub.trim();
+      // If line has pipes and looks like a table row (not a quote or heading)
+      if (subTrimmed.includes('|') && !subTrimmed.startsWith('>') && !subTrimmed.startsWith('#')) {
+        if (!subTrimmed.startsWith('|')) {
+          subTrimmed = '| ' + subTrimmed;
+        }
+        if (!subTrimmed.endsWith('|')) {
+          subTrimmed = subTrimmed + ' |';
+        }
+      }
+      processedLines.push(subTrimmed);
+    }
+  }
+
+  // Step 3: Ensure blank line before table start, and NO blank lines inside table
+  const finalLines: string[] = [];
+  let inTable = false;
+  inCodeBlock = false;
+
+  for (let i = 0; i < processedLines.length; i++) {
+    const line = processedLines[i];
+    const trimmed = line.trim();
+
+    if (trimmed.startsWith('```')) {
+      inCodeBlock = !inCodeBlock;
+      finalLines.push(line);
+      continue;
+    }
+
+    if (inCodeBlock) {
+      finalLines.push(line);
+      continue;
+    }
+
+    const isTableRow = trimmed.startsWith('|') && trimmed.endsWith('|') && trimmed.length > 2;
+
+    if (isTableRow) {
+      if (!inTable) {
+        // Table starting: ensure previous line is blank if preceded by non-empty text
+        if (finalLines.length > 0 && finalLines[finalLines.length - 1] !== '') {
+          finalLines.push('');
+        }
+        inTable = true;
+      }
+      finalLines.push(trimmed);
+    } else {
+      if (inTable && trimmed === '') {
+        // Lookahead: check if next non-empty line is a table row
+        let nextIsTable = false;
+        for (let j = i + 1; j < processedLines.length; j++) {
+          const nextTrimmed = processedLines[j].trim();
+          if (nextTrimmed === '') continue;
+          if (nextTrimmed.startsWith('|') && nextTrimmed.endsWith('|')) {
+            nextIsTable = true;
+          }
+          break;
+        }
+        if (nextIsTable) {
+          // Skip empty line between table rows
+          continue;
+        }
+        inTable = false;
+      } else if (inTable) {
+        inTable = false;
+      }
+      finalLines.push(line);
+    }
+  }
+
+  return finalLines.join('\n');
 };
 
 export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, className = '' }) => {
@@ -25,8 +122,8 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, cla
         remarkPlugins={[remarkGfm]}
         components={{
           table: ({ children }) => (
-            <div className="my-3 w-full max-w-full overflow-x-auto rounded-xl border border-slate-700/80 bg-slate-950/90 shadow-lg scrollbar-thin">
-              <table className="w-full border-collapse text-[11px] text-slate-300">
+            <div className="my-3 w-full max-w-full overflow-x-auto rounded-xl border border-slate-700/80 bg-slate-950/90 shadow-lg scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent">
+              <table className="w-full border-collapse text-[11px] text-slate-300 min-w-[280px]">
                 {children}
               </table>
             </div>
@@ -47,12 +144,12 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, cla
             </tr>
           ),
           th: ({ children }) => (
-            <th className="px-3 py-2 text-left font-semibold whitespace-nowrap text-slate-200 border-r border-slate-800 last:border-r-0">
+            <th className="px-2.5 py-2 text-left font-semibold text-slate-200 border-r border-slate-800 last:border-r-0 whitespace-normal min-w-[70px] leading-tight">
               {children}
             </th>
           ),
           td: ({ children }) => (
-            <td className="px-3 py-1.5 whitespace-nowrap border-r border-slate-800/50 last:border-r-0 text-slate-300 tabular-nums">
+            <td className="px-2.5 py-2 border-r border-slate-800/50 last:border-r-0 text-slate-300 tabular-nums whitespace-normal break-words leading-snug">
               {children}
             </td>
           ),

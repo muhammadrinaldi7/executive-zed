@@ -19,6 +19,7 @@ import type {
   ProjectSalesReportResponse,
   ProjectSalesDetailItem,
   BranchTransactionsResponse,
+  PiutangReportData,
 } from '../types';
 
 export const executiveApi = {
@@ -229,6 +230,15 @@ export const executiveApi = {
    */
   async getBranchTransactions(params: FilterParams & { branch: string; search?: string }) {
     const response = await apiClient.get<ApiResponse<BranchTransactionsResponse>>('/branch-transactions', {
+      params,
+    });
+    return response.data;
+  },
+  /**
+   * Get Outstanding Receivables (Piutang) report strictly adhering to Dashboard.php.
+   */
+  async getPiutangReport(params?: FilterParams) {
+    const response = await apiClient.get<ApiResponse<PiutangReportData>>('/piutang', {
       params,
     });
     return response.data;

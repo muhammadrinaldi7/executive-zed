@@ -479,3 +479,57 @@ export interface BranchTransactionsResponse {
   };
   transactions: BranchTransactionItem[];
 }
+
+
+export interface PiutangMethodItem {
+  payment_method: string;
+  type: 'toko' | 'finance';
+  total: number;
+  sisa: number;
+  count_total: number;
+  count_pending: number;
+}
+
+export interface PiutangTransactionDetail {
+  order_id: number;
+  order_number: string;
+  invoice_no: string;
+  type: 'toko' | 'finance';
+  payment_method: string;
+  customer_name: string;
+  customer_phone: string;
+  branch: string;
+  cashier_name: string;
+  sales_name: string;
+  order_date: string;
+  aging_days: number;
+  amount: number;
+  mdr: number;
+  net_amount: number;
+  payment_status: string;
+  is_outstanding: boolean;
+  notes?: string | null;
+}
+
+export interface PiutangReportData {
+  period: {
+    range: string;
+    start_date: string;
+    end_date: string;
+  };
+  summary: {
+    total_piutang: number;
+    total_sisa: number;
+    total_piutang_toko: number;
+    total_finance_pending: number;
+    outstanding_orders_count: number;
+    aging_summary: {
+      under_7_days: number;
+      days_7_to_14: number;
+      days_15_to_30: number;
+      over_30_days: number;
+    };
+  };
+  piutang_transactions: PiutangMethodItem[];
+  details: PiutangTransactionDetail[];
+}
