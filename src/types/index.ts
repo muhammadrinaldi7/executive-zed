@@ -292,8 +292,29 @@ export interface CashierAuditData {
   };
 }
 
+export interface VendorSubsidyItem {
+  vendor_name: string;
+  claims_count: number;
+  total_subsidy: number;
+  brands: string[];
+  promos?: string[];
+}
+
+export interface BrandSubsidyItem {
+  brand: string;
+  claims_count: number;
+  total_subsidy: number;
+  vendors: Array<{
+    vendor_name: string;
+    total_subsidy: number;
+    claims_count: number;
+  }>;
+}
+
 export interface PromoLeaderboardItem {
   promo_name: string;
+  brand?: string;
+  top_vendor?: string;
   times_used: number;
   total_discount: number;
 }
@@ -315,8 +336,12 @@ export interface PromoClaimsData {
     orders_with_promo_count: number;
     total_promo_claims_count: number;
     avg_discount_per_order: number;
+    total_brands_count?: number;
+    total_vendors_count?: number;
   };
   promo_leaderboard: PromoLeaderboardItem[];
+  brand_breakdown?: BrandSubsidyItem[];
+  vendor_breakdown?: VendorSubsidyItem[];
   recent_claims: PromoClaimRowItem[];
 }
 
