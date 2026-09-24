@@ -18,6 +18,7 @@ import type {
   PromoClaimsData,
   ProjectSalesReportResponse,
   ProjectSalesDetailItem,
+  BranchTransactionsResponse,
 } from '../types';
 
 export const executiveApi = {
@@ -219,6 +220,15 @@ export const executiveApi = {
     business_unit_id?: number | string | null;
   }) {
     const response = await apiClient.get<ApiResponse<ProjectSalesDetailItem[]>>('/project-sales/detail', {
+      params,
+    });
+    return response.data;
+  },
+  /**
+   * Get Branch Detailed Invoices / Transactions.
+   */
+  async getBranchTransactions(params: FilterParams & { branch: string; search?: string }) {
+    const response = await apiClient.get<ApiResponse<BranchTransactionsResponse>>('/branch-transactions', {
       params,
     });
     return response.data;

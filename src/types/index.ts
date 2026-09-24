@@ -425,3 +425,56 @@ export interface ProjectSalesDetailItem {
   subtotal: number;
   payment_method: string;
 }
+
+export interface BranchTransactionPayment {
+  name: string;
+  amount: number;
+  rate_name?: string | null;
+  mdr_amount: number;
+  no_kontrak?: string | null;
+}
+
+export interface BranchTransactionProductItem {
+  product_name: string;
+  sku: string;
+  qty: number;
+  price: number;
+  discount: number;
+  subtotal: number;
+  serial_number?: string | null;
+}
+
+export interface BranchTransactionItem {
+  order_id: number;
+  order_number: string;
+  invoice_no: string;
+  date: string;
+  time: string;
+  branch: string;
+  customer_name: string;
+  customer_phone: string;
+  sales_name: string;
+  cashier_name: string;
+  status: string;
+  total_qty: number;
+  gross_sales: number;
+  discount: number;
+  grand_total: number;
+  mdr: number;
+  net_sales: number;
+  payment_methods: BranchTransactionPayment[];
+  items: BranchTransactionProductItem[];
+  notes?: string | null;
+}
+
+export interface BranchTransactionsResponse {
+  branch: string;
+  summary: {
+    total_orders: number;
+    total_qty: number;
+    total_grand_total: number;
+    total_net_sales: number;
+    total_mdr: number;
+  };
+  transactions: BranchTransactionItem[];
+}
