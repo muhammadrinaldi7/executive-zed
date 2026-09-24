@@ -117,6 +117,7 @@ export interface TopProduct {
 export interface PaymentMethodMetric {
   payment_method_id: number | null;
   payment_method_name: string;
+  category?: string;
   bank_name: string;
   transactions_count: number;
   total_amount: number;
