@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useFilter } from '../context/FilterContext';
 import type { FilterOptions } from '../types';
-import { Calendar, Store, RotateCcw } from 'lucide-react';
+import { Calendar, Store, RotateCcw, Building2 } from 'lucide-react';
 
 interface FilterBarProps {
   filterOptions?: FilterOptions | null;
@@ -19,7 +19,13 @@ const PRESET_PILLS = [
 ];
 
 export const FilterBar: React.FC<FilterBarProps> = ({ filterOptions }) => {
-  const { filters, setDateRange, setCustomDateRange, setBranch } = useFilter();
+  const {
+    filters,
+    setDateRange,
+    setCustomDateRange,
+    setBranch,
+    setBusinessUnitId,
+  } = useFilter();
 
   const [customStart, setCustomStart] = useState<string>(filters.start_date || '');
   const [customEnd, setCustomEnd] = useState<string>(filters.end_date || '');
@@ -34,6 +40,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({ filterOptions }) => {
   const handleResetFilters = () => {
     setDateRange('this_month');
     setBranch(null);
+    setBusinessUnitId(null);
     setCustomStart('');
     setCustomEnd('');
   };
@@ -49,10 +56,10 @@ export const FilterBar: React.FC<FilterBarProps> = ({ filterOptions }) => {
     : filterOptions?.branches?.map((b) => b.name) || [];
 
   return (
-    <div className="no-print w-full bg-slate-900/60 border-b border-slate-800/80 py-3 px-4 sm:px-6 lg:px-8 backdrop-blur-md">
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
+    <div className="no-print w-full bg-slate-900/60 border-b border-slate-800/80 py-2.5 sm:py-3 px-3 sm:px-6 lg:px-8 backdrop-blur-md max-w-full overflow-hidden">
+      <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-3 w-full min-w-0">
         {/* Left: Quick Date Range Pills */}
-        <div className="flex items-center gap-1.5 overflow-x-auto w-full md:w-auto pb-1 md:pb-0 scrollbar-none">
+        <div className="flex items-center gap-1.5 overflow-x-auto w-full md:w-auto pb-1 md:pb-0 no-scrollbar scrollbar-none touch-pan-x min-w-0">
           <div className="flex items-center text-slate-400 text-xs mr-1 shrink-0 font-medium">
             <Calendar className="w-3.5 h-3.5 mr-1 text-indigo-400" />
             <span className="hidden sm:inline">Periode:</span>
@@ -64,7 +71,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({ filterOptions }) => {
               <button
                 key={pill.value}
                 onClick={() => setDateRange(pill.value)}
-                className={`px-3 py-1 rounded-lg text-xs font-semibold shrink-0 transition-all cursor-pointer ${
+                className={`px-2.5 sm:px-3 py-1 rounded-lg text-xs font-semibold shrink-0 transition-all cursor-pointer ${
                   isActive
                     ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
                     : 'bg-slate-800/80 text-slate-300 hover:bg-slate-800 hover:text-white border border-slate-700/50'
@@ -76,42 +83,63 @@ export const FilterBar: React.FC<FilterBarProps> = ({ filterOptions }) => {
           })}
         </div>
 
-        {/* Right: Branch Filter & Custom Date Inputs */}
-        <div className="flex flex-wrap items-center gap-2.5 w-full md:w-auto">
+        {/* Right: Branch Filter, BU Selector & Custom Date Inputs */}
+        <div className="flex flex-wrap items-center gap-2 sm:gap-2.5 w-full md:w-auto min-w-0">
           {/* Custom Date Range Popover/Inputs */}
           {filters.date_range === 'custom' && (
-            <form onSubmit={handleApplyCustomDate} className="flex items-center gap-1.5">
+            <form onSubmit={handleApplyCustomDate} className="flex flex-wrap items-center gap-1.5 w-full sm:w-auto">
               <input
                 type="date"
                 value={customStart}
                 onChange={(e) => setCustomStart(e.target.value)}
-                className="px-2 py-1 bg-slate-950 border border-slate-700 rounded-lg text-xs text-white focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                className="flex-1 sm:flex-none min-w-[120px] px-2 py-1 bg-slate-950 border border-slate-700 rounded-lg text-xs text-white focus:outline-none focus:ring-1 focus:ring-indigo-500"
               />
               <span className="text-slate-500 text-xs font-bold">-</span>
               <input
                 type="date"
                 value={customEnd}
                 onChange={(e) => setCustomEnd(e.target.value)}
-                className="px-2 py-1 bg-slate-950 border border-slate-700 rounded-lg text-xs text-white focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                className="flex-1 sm:flex-none min-w-[120px] px-2 py-1 bg-slate-950 border border-slate-700 rounded-lg text-xs text-white focus:outline-none focus:ring-1 focus:ring-indigo-500"
               />
               <button
                 type="submit"
-                className="px-2.5 py-1 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-medium transition-colors cursor-pointer"
+                className="px-2.5 py-1 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-medium transition-colors cursor-pointer shrink-0"
               >
                 Terapkan
               </button>
             </form>
           )}
 
+          {/* Business Unit Selector for Mobile */}
+          {filterOptions?.business_units && filterOptions.business_units.length > 1 && (
+            <div className="relative flex md:hidden items-center flex-1 sm:flex-none min-w-[140px]">
+              <div className="absolute left-2.5 text-slate-400 pointer-events-none">
+                <Building2 className="w-3.5 h-3.5" />
+              </div>
+              <select
+                value={filters.business_unit_id ?? ''}
+                onChange={(e) => setBusinessUnitId(e.target.value || null)}
+                className="w-full pl-8 pr-7 py-1 bg-slate-950 border border-slate-700/80 rounded-lg text-xs font-medium text-white focus:outline-none focus:ring-1 focus:ring-indigo-500 cursor-pointer truncate"
+              >
+                <option value="">Semua BU</option>
+                {filterOptions.business_units.map((bu) => (
+                  <option key={bu.id} value={bu.id}>
+                    BU: {bu.name} ({bu.code})
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
           {/* Branch / Store Dropdown */}
-          <div className="relative flex items-center">
+          <div className="relative flex items-center flex-1 sm:flex-none min-w-[150px]">
             <div className="absolute left-2.5 text-slate-400 pointer-events-none">
               <Store className="w-3.5 h-3.5" />
             </div>
             <select
               value={filters.branch ?? ''}
               onChange={(e) => setBranch(e.target.value || null)}
-              className="pl-8 pr-7 py-1 bg-slate-950 border border-slate-700/80 rounded-lg text-xs font-medium text-white focus:outline-none focus:ring-1 focus:ring-indigo-500 cursor-pointer"
+              className="w-full pl-8 pr-7 py-1 bg-slate-950 border border-slate-700/80 rounded-lg text-xs font-medium text-white focus:outline-none focus:ring-1 focus:ring-indigo-500 cursor-pointer truncate"
             >
               <option value="">Semua Cabang / Toko</option>
               {availableStores.map((store) => (
@@ -127,7 +155,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({ filterOptions }) => {
             <button
               onClick={handleResetFilters}
               title="Kembalikan filter ke Bulan Ini (Semua Cabang)"
-              className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition-colors cursor-pointer"
+              className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition-colors cursor-pointer shrink-0"
             >
               <RotateCcw className="w-3 h-3 text-slate-400" />
               <span>Reset</span>

@@ -123,33 +123,33 @@ export const StaffKpiTab: React.FC = () => {
       </div>
 
       {/* 2. Role Selector Tabs */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-2 bg-slate-900/60 rounded-2xl border border-slate-800/80">
-        <div className="flex items-center gap-2">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-2 bg-slate-900/60 rounded-2xl border border-slate-800/80 max-w-full overflow-hidden">
+        <div className="flex items-center gap-2 w-full sm:w-auto">
           <button
             onClick={() => setStaffRole('sales')}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+            className={`flex-1 sm:flex-none flex items-center justify-center gap-2 px-3.5 sm:px-5 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
               staffRole === 'sales'
                 ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/25'
                 : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
             }`}
           >
-            <Users className="w-4 h-4" />
-            Ranking Salesperson ({salesList.length})
+            <Users className="w-4 h-4 shrink-0" />
+            <span className="truncate">Ranking Sales ({salesList.length})</span>
           </button>
           <button
             onClick={() => setStaffRole('cashier')}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+            className={`flex-1 sm:flex-none flex items-center justify-center gap-2 px-3.5 sm:px-5 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
               staffRole === 'cashier'
                 ? 'bg-cyan-600 text-white shadow-lg shadow-cyan-600/25'
                 : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
             }`}
           >
-            <UserCheck className="w-4 h-4" />
-            Ranking Kasir ({cashiersList.length})
+            <UserCheck className="w-4 h-4 shrink-0" />
+            <span className="truncate">Ranking Kasir ({cashiersList.length})</span>
           </button>
         </div>
 
-        <div className="text-xs text-slate-400 px-3">
+        <div className="text-xs text-slate-400 px-2 sm:px-3">
           {staffRole === 'sales'
             ? 'Metrik sales dihitung berdasarkan penjualan yang di-closing oleh masing-masing staff.'
             : 'Metrik kasir dihitung berdasarkan transaksi pembayaran yang diproses dan dicetak nota oleh kasir.'}

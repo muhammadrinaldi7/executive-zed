@@ -39,7 +39,7 @@ export const TopProductsTable: React.FC<TopProductsTableProps> = ({ products, is
   };
 
   return (
-    <div className="glass-card rounded-2xl p-6 border border-slate-800/90">
+    <div className="glass-card rounded-2xl p-4 sm:p-6 border border-slate-800/90 max-w-full overflow-hidden">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-5">
         <div>
           <h3 className="text-base font-bold text-white tracking-tight flex items-center gap-2">
@@ -52,10 +52,10 @@ export const TopProductsTable: React.FC<TopProductsTableProps> = ({ products, is
         </div>
 
         {/* Sort Switcher */}
-        <div className="flex items-center gap-1 p-1 bg-slate-900/80 rounded-xl border border-slate-800 text-xs">
+        <div className="flex items-center gap-1 p-1 bg-slate-900/80 rounded-xl border border-slate-800 text-xs w-full sm:w-auto">
           <button
             onClick={() => setSortBy('revenue')}
-            className={`px-3 py-1 rounded-lg font-medium transition-all cursor-pointer ${
+            className={`flex-1 sm:flex-none text-center px-3 py-1 rounded-lg font-medium transition-all cursor-pointer ${
               filters.sort_by === 'revenue'
                 ? 'bg-indigo-600 text-white shadow-sm'
                 : 'text-slate-400 hover:text-white'
@@ -65,7 +65,7 @@ export const TopProductsTable: React.FC<TopProductsTableProps> = ({ products, is
           </button>
           <button
             onClick={() => setSortBy('qty')}
-            className={`px-3 py-1 rounded-lg font-medium transition-all cursor-pointer ${
+            className={`flex-1 sm:flex-none text-center px-3 py-1 rounded-lg font-medium transition-all cursor-pointer ${
               filters.sort_by === 'qty'
                 ? 'bg-indigo-600 text-white shadow-sm'
                 : 'text-slate-400 hover:text-white'
@@ -81,7 +81,7 @@ export const TopProductsTable: React.FC<TopProductsTableProps> = ({ products, is
           Belum ada data penjualan produk untuk filter ini.
         </div>
       ) : (
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto w-full min-w-0">
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="border-b border-slate-800 text-[11px] font-semibold uppercase tracking-wider text-slate-400">

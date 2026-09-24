@@ -48,7 +48,7 @@ export const TrendChart: React.FC<TrendChartProps> = ({ trend, isLoading }) => {
       : 'Harian';
 
   return (
-    <div className="glass-card rounded-2xl p-6 border border-slate-800/90">
+    <div className="glass-card rounded-2xl p-4 sm:p-6 border border-slate-800/90 max-w-full overflow-hidden">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
         <div>
           <div className="flex items-center gap-2">
@@ -66,10 +66,10 @@ export const TrendChart: React.FC<TrendChartProps> = ({ trend, isLoading }) => {
         </div>
 
         {/* Metric View Selector */}
-        <div className="flex items-center gap-1 p-1 bg-slate-900/80 rounded-xl border border-slate-800 text-xs">
+        <div className="flex items-center gap-1 p-1 bg-slate-900/80 rounded-xl border border-slate-800 text-xs w-full sm:w-auto overflow-x-auto">
           <button
             onClick={() => setViewMetric('both')}
-            className={`px-3 py-1 rounded-lg font-medium transition-all cursor-pointer ${
+            className={`flex-1 sm:flex-none text-center px-3 py-1 rounded-lg font-medium transition-all cursor-pointer ${
               viewMetric === 'both'
                 ? 'bg-indigo-600 text-white shadow-sm'
                 : 'text-slate-400 hover:text-white'
@@ -79,7 +79,7 @@ export const TrendChart: React.FC<TrendChartProps> = ({ trend, isLoading }) => {
           </button>
           <button
             onClick={() => setViewMetric('sales')}
-            className={`px-3 py-1 rounded-lg font-medium transition-all cursor-pointer ${
+            className={`flex-1 sm:flex-none text-center px-3 py-1 rounded-lg font-medium transition-all cursor-pointer ${
               viewMetric === 'sales'
                 ? 'bg-indigo-600 text-white shadow-sm'
                 : 'text-slate-400 hover:text-white'
@@ -89,7 +89,7 @@ export const TrendChart: React.FC<TrendChartProps> = ({ trend, isLoading }) => {
           </button>
           <button
             onClick={() => setViewMetric('profit')}
-            className={`px-3 py-1 rounded-lg font-medium transition-all cursor-pointer ${
+            className={`flex-1 sm:flex-none text-center px-3 py-1 rounded-lg font-medium transition-all cursor-pointer ${
               viewMetric === 'profit'
                 ? 'bg-emerald-600 text-white shadow-sm'
                 : 'text-slate-400 hover:text-white'
@@ -101,7 +101,7 @@ export const TrendChart: React.FC<TrendChartProps> = ({ trend, isLoading }) => {
       </div>
 
       {/* Legend Pills */}
-      <div className="flex items-center gap-4 mb-4 text-xs">
+      <div className="flex flex-wrap items-center gap-2 sm:gap-4 mb-4 text-xs">
         {(viewMetric === 'both' || viewMetric === 'sales') && (
           <div className="flex items-center gap-1.5 text-slate-300">
             <span className="w-2.5 h-2.5 rounded-full bg-indigo-500 shadow-sm shadow-indigo-500/50" />
@@ -117,7 +117,7 @@ export const TrendChart: React.FC<TrendChartProps> = ({ trend, isLoading }) => {
       </div>
 
       {/* Recharts Area Chart */}
-      <div className="h-72 w-full">
+      <div className="h-72 w-full min-w-0">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
             <defs>

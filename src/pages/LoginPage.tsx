@@ -45,7 +45,7 @@ export const LoginPage: React.FC = () => {
             Executive Intelligence Suite
           </div>
           <h1 className="text-3xl font-extrabold text-white tracking-tight sm:text-4xl">
-            Tokopon <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-300 to-emerald-400">Zed</span>
+            ZED <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-300 to-emerald-400">Executive</span>
           </h1>
           <p className="mt-2 text-sm text-slate-400 font-medium">
             Portal Bisnis & Analitik Khusus Direksi / C-Level
@@ -53,7 +53,7 @@ export const LoginPage: React.FC = () => {
         </div>
 
         {/* Login Card */}
-        <div className="glass-card rounded-2xl p-8 shadow-2xl relative">
+        <div className="glass-card rounded-2xl p-6 sm:p-8 shadow-2xl relative max-w-full">
           <div className="flex items-center gap-3 pb-6 border-b border-slate-800/80 mb-6">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-700 flex items-center justify-center text-white shadow-lg shadow-indigo-500/25">
               <ShieldCheck className="w-5 h-5" />

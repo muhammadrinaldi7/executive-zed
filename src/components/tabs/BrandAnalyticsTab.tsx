@@ -174,10 +174,10 @@ export const BrandAnalyticsTab: React.FC = () => {
       </div>
 
       {/* 2. Visual Charts Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 min-w-0">
         {/* Left: Donut Chart Market Share */}
-        <div className="glass-card rounded-2xl p-6 border border-slate-800/90 flex flex-col justify-between">
-          <div className="flex items-center justify-between mb-4">
+        <div className="glass-card rounded-2xl p-4 sm:p-6 border border-slate-800/90 flex flex-col justify-between min-w-0 max-w-full overflow-hidden">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-4">
             <div className="flex items-center gap-2">
               <PieIcon className="w-4 h-4 text-indigo-400" />
               <h3 className="text-base font-bold text-white">Komposisi Pangsa Pasar (Market Share)</h3>
@@ -186,8 +186,8 @@ export const BrandAnalyticsTab: React.FC = () => {
           </div>
 
           {topBrandsForPie.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
-              <div className="h-60 flex items-center justify-center">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center min-w-0">
+              <div className="h-60 flex items-center justify-center min-w-0">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie
@@ -252,8 +252,8 @@ export const BrandAnalyticsTab: React.FC = () => {
         </div>
 
         {/* Right: Bar Chart Profit Margin % */}
-        <div className="glass-card rounded-2xl p-6 border border-slate-800/90 flex flex-col justify-between">
-          <div className="flex items-center justify-between mb-4">
+        <div className="glass-card rounded-2xl p-4 sm:p-6 border border-slate-800/90 flex flex-col justify-between min-w-0 max-w-full overflow-hidden">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-4">
             <div className="flex items-center gap-2">
               <BarChart3 className="w-4 h-4 text-emerald-400" />
               <h3 className="text-base font-bold text-white">Profit Margin (%) per Brand</h3>
@@ -262,7 +262,7 @@ export const BrandAnalyticsTab: React.FC = () => {
           </div>
 
           {topBrandsForBar.length > 0 ? (
-            <div className="h-60">
+            <div className="h-60 min-w-0">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={topBrandsForBar} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
@@ -316,8 +316,8 @@ export const BrandAnalyticsTab: React.FC = () => {
       </div>
 
       {/* 3. Detailed Brand Performance Table */}
-      <div className="glass-card rounded-2xl border border-slate-800/80 overflow-hidden">
-        <div className="p-5 border-b border-slate-800/80 flex items-center justify-between">
+      <div className="glass-card rounded-2xl border border-slate-800/80 overflow-hidden max-w-full">
+        <div className="p-4 sm:p-5 border-b border-slate-800/80 flex items-center justify-between">
           <div>
             <h3 className="text-base font-bold text-white">Tabel Kinerja & Profitabilitas Brand</h3>
             <p className="text-xs text-slate-400 mt-0.5">
@@ -326,7 +326,7 @@ export const BrandAnalyticsTab: React.FC = () => {
           </div>
         </div>
 
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto w-full min-w-0">
           <table className="w-full text-left text-xs text-slate-300">
             <thead className="bg-slate-900/80 text-[11px] font-semibold text-slate-400 uppercase tracking-wider border-b border-slate-800">
               <tr>

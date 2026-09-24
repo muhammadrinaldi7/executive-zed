@@ -135,7 +135,7 @@ export const PromoClaimsTab: React.FC = () => {
       </div>
 
       {/* 2. Promo Program Leaderboard */}
-      <div className="glass-card rounded-2xl border border-slate-800/80 p-5">
+      <div className="glass-card rounded-2xl border border-slate-800/80 p-4 sm:p-5 max-w-full overflow-hidden">
         <div className="flex items-center justify-between mb-4">
           <div>
             <h3 className="text-base font-bold text-white flex items-center gap-2">
@@ -196,8 +196,8 @@ export const PromoClaimsTab: React.FC = () => {
       </div>
 
       {/* 3. Detailed Claims Log Table */}
-      <div className="glass-card rounded-2xl border border-slate-800/80 overflow-hidden">
-        <div className="p-5 border-b border-slate-800/80 flex items-center justify-between">
+      <div className="glass-card rounded-2xl border border-slate-800/80 overflow-hidden max-w-full">
+        <div className="p-4 sm:p-5 border-b border-slate-800/80 flex items-center justify-between">
           <div>
             <h3 className="text-base font-bold text-white">Log Klaim Promo & Subsidi Vendor</h3>
             <p className="text-xs text-slate-400 mt-0.5">
@@ -206,7 +206,7 @@ export const PromoClaimsTab: React.FC = () => {
           </div>
         </div>
 
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto w-full min-w-0">
           <table className="w-full text-left text-xs text-slate-300">
             <thead className="bg-slate-900/80 text-[11px] font-semibold text-slate-400 uppercase tracking-wider border-b border-slate-800">
               <tr>

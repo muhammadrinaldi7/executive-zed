@@ -66,12 +66,12 @@ export const KpiCardGrid: React.FC<KpiCardGridProps> = ({ data, isLoading }) => 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       {/* 1. Net Sales (Omset Bersih) */}
-      <div className="glass-card rounded-2xl p-5 relative overflow-hidden border border-slate-800/90 group">
+      <div className="glass-card rounded-2xl p-4 sm:p-5 relative overflow-hidden border border-slate-800/90 group max-w-full">
         <div className="flex items-center justify-between">
           <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
             Omset Bersih (Net Sales)
           </span>
-          <div className="w-8 h-8 rounded-xl bg-indigo-500/15 border border-indigo-500/30 flex items-center justify-center text-indigo-400 shadow-sm">
+          <div className="w-8 h-8 rounded-xl bg-indigo-500/15 border border-indigo-500/30 flex items-center justify-center text-indigo-400 shadow-sm shrink-0">
             <CircleDollarSign className="w-4 h-4" />
           </div>
         </div>
@@ -90,20 +90,20 @@ export const KpiCardGrid: React.FC<KpiCardGridProps> = ({ data, isLoading }) => 
           </div>
         </div>
 
-        <div className="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-400">
+        <div className="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-400 flex-wrap gap-1">
           <span>Gross: {formatCurrency(summary.gross_sales)}</span>
-          <span className="text-slate-500">•</span>
+          <span className="text-slate-500 hidden sm:inline">•</span>
           <span>MDR: {formatCurrency(summary.total_mdr)}</span>
         </div>
       </div>
 
       {/* 2. Gross Profit (Laba Kotor) */}
-      <div className="glass-card rounded-2xl p-5 relative overflow-hidden border border-slate-800/90 group">
+      <div className="glass-card rounded-2xl p-4 sm:p-5 relative overflow-hidden border border-slate-800/90 group max-w-full">
         <div className="flex items-center justify-between">
           <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
             Laba Kotor (Gross Profit)
           </span>
-          <div className="w-8 h-8 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shadow-sm">
+          <div className="w-8 h-8 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shadow-sm shrink-0">
             <PieChart className="w-4 h-4" />
           </div>
         </div>
@@ -120,11 +120,11 @@ export const KpiCardGrid: React.FC<KpiCardGridProps> = ({ data, isLoading }) => 
           </div>
         </div>
 
-        <div className="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-400">
+        <div className="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-400 flex-wrap gap-1">
           <span>Total HPP: {formatCurrency(summary.total_hpp)}</span>
           {summary.total_discount > 0 && (
             <>
-              <span className="text-slate-500">•</span>
+              <span className="text-slate-500 hidden sm:inline">•</span>
               <span>Diskon: {formatCurrency(summary.total_discount)}</span>
             </>
           )}
@@ -132,12 +132,12 @@ export const KpiCardGrid: React.FC<KpiCardGridProps> = ({ data, isLoading }) => 
       </div>
 
       {/* 3. Total Volume & AOV */}
-      <div className="glass-card rounded-2xl p-5 relative overflow-hidden border border-slate-800/90 group">
+      <div className="glass-card rounded-2xl p-4 sm:p-5 relative overflow-hidden border border-slate-800/90 group max-w-full">
         <div className="flex items-center justify-between">
           <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
             Volume & Rata-rata Order
           </span>
-          <div className="w-8 h-8 rounded-xl bg-purple-500/15 border border-purple-500/30 flex items-center justify-center text-purple-400 shadow-sm">
+          <div className="w-8 h-8 rounded-xl bg-purple-500/15 border border-purple-500/30 flex items-center justify-center text-purple-400 shadow-sm shrink-0">
             <ShoppingBag className="w-4 h-4" />
           </div>
         </div>
@@ -155,7 +155,7 @@ export const KpiCardGrid: React.FC<KpiCardGridProps> = ({ data, isLoading }) => 
           </div>
         </div>
 
-        <div className="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-400">
+        <div className="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-400 flex-wrap gap-1">
           <span>AOV (Rata-rata):</span>
           <span className="font-semibold text-slate-200">
             {formatCurrency(summary.average_order_value)}
@@ -164,12 +164,12 @@ export const KpiCardGrid: React.FC<KpiCardGridProps> = ({ data, isLoading }) => 
       </div>
 
       {/* 4. Realisasi Kas & Piutang */}
-      <div className="glass-card rounded-2xl p-5 relative overflow-hidden border border-slate-800/90 group">
+      <div className="glass-card rounded-2xl p-4 sm:p-5 relative overflow-hidden border border-slate-800/90 group max-w-full">
         <div className="flex items-center justify-between">
           <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
             Realisasi & Piutang
           </span>
-          <div className="w-8 h-8 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-400 shadow-sm">
+          <div className="w-8 h-8 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-400 shadow-sm shrink-0">
             <CreditCard className="w-4 h-4" />
           </div>
         </div>
@@ -195,7 +195,7 @@ export const KpiCardGrid: React.FC<KpiCardGridProps> = ({ data, isLoading }) => 
           </div>
         </div>
 
-        <div className="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-400">
+        <div className="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-400 flex-wrap gap-1">
           <span>Status Pembayaran:</span>
           <span className="font-semibold text-emerald-400">
             {summary.net_sales > 0

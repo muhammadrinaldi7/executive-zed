@@ -8,7 +8,6 @@ import {
   RefreshCw,
   LogOut,
   Building2,
-  Sparkles,
   Printer,
   FileSpreadsheet,
 } from 'lucide-react';
@@ -58,16 +57,9 @@ export const Header: React.FC<HeaderProps> = ({ filterOptions, isLoading, overvi
             <div>
               <div className="flex items-center gap-2">
                 <span className="font-extrabold text-base tracking-tight text-white">
-                  TOKOPON <span className="text-indigo-400 font-black">ZED</span>
-                </span>
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-indigo-500/15 border border-indigo-500/30 text-indigo-300">
-                  <Sparkles className="w-2.5 h-2.5 text-indigo-400" />
-                  Executive
+                  ZED <span className="text-indigo-400 font-black">Executive</span>
                 </span>
               </div>
-              <p className="text-[11px] text-slate-400 font-medium hidden sm:block">
-                C-Level Business Intelligence & Realtime Analytics
-              </p>
             </div>
           </div>
 
@@ -109,7 +101,7 @@ export const Header: React.FC<HeaderProps> = ({ filterOptions, isLoading, overvi
             <button
               onClick={handlePrintPdf}
               title="Cetak atau Simpan PDF Laporan Resmi"
-              className="flex items-center gap-1.5 px-2.5 py-1.5 bg-slate-900 hover:bg-indigo-950/40 border border-slate-800 hover:border-indigo-500/40 text-slate-300 hover:text-indigo-300 rounded-lg text-xs font-medium transition-all cursor-pointer"
+              className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 bg-slate-900 hover:bg-indigo-950/40 border border-slate-800 hover:border-indigo-500/40 text-slate-300 hover:text-indigo-300 rounded-lg text-xs font-medium transition-all cursor-pointer"
             >
               <Printer className="w-3.5 h-3.5 text-indigo-400" />
               <span className="hidden md:inline">Cetak PDF</span>
@@ -138,7 +130,7 @@ export const Header: React.FC<HeaderProps> = ({ filterOptions, isLoading, overvi
               onClick={refreshData}
               disabled={isLoading}
               title={`Diperbarui pukul ${timeString}. Klik untuk reload.`}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-900 hover:bg-slate-800/80 border border-slate-800 text-slate-300 hover:text-white rounded-lg text-xs font-medium transition-all cursor-pointer disabled:opacity-50"
+              className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 bg-slate-900 hover:bg-slate-800/80 border border-slate-800 text-slate-300 hover:text-white rounded-lg text-xs font-medium transition-all cursor-pointer disabled:opacity-50 shrink-0"
             >
               <RefreshCw
                 className={`w-3.5 h-3.5 text-indigo-400 ${isLoading ? 'animate-spin' : ''}`}

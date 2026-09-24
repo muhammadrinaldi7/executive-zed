@@ -53,8 +53,8 @@ export const PaymentBreakdown: React.FC<PaymentBreakdownProps> = ({ payments, is
   const totalMdr = payments.reduce((acc, curr) => acc + curr.total_mdr, 0);
 
   return (
-    <div className="glass-card rounded-2xl p-6 border border-slate-800/90">
-      <div className="flex items-center justify-between mb-4">
+    <div className="glass-card rounded-2xl p-4 sm:p-6 border border-slate-800/90 max-w-full overflow-hidden">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
         <div>
           <h3 className="text-base font-bold text-white tracking-tight flex items-center gap-2">
             <CreditCard className="w-4 h-4 text-indigo-400" />
@@ -64,7 +64,7 @@ export const PaymentBreakdown: React.FC<PaymentBreakdownProps> = ({ payments, is
             Komposisi kas masuk, non-tunai, dan pemotongan biaya fee merchant
           </p>
         </div>
-        <div className="text-right">
+        <div className="text-left sm:text-right flex sm:flex-col justify-between sm:justify-start items-baseline sm:items-end gap-1 pt-1 sm:pt-0 border-t sm:border-t-0 border-slate-800/60">
           <div className="text-xs text-slate-400">Total Potongan MDR</div>
           <div className="text-xs font-bold text-rose-400 tabular-nums">
             {formatCurrency(totalMdr)}
@@ -72,9 +72,9 @@ export const PaymentBreakdown: React.FC<PaymentBreakdownProps> = ({ payments, is
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center mt-2">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center mt-2 min-w-0">
         {/* Donut Chart */}
-        <div className="h-56 relative flex items-center justify-center">
+        <div className="h-56 relative flex items-center justify-center min-w-0">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie

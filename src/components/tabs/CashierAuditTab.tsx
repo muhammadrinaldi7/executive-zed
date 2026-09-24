@@ -174,36 +174,40 @@ export const CashierAuditTab: React.FC = () => {
       </div>
 
       {/* 3. Sub-Tab Switching Controls */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-2 bg-slate-900/60 rounded-2xl border border-slate-800/80">
-        <div className="flex items-center gap-2">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-2 bg-slate-900/60 rounded-2xl border border-slate-800/80 max-w-full overflow-hidden">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
           <button
             onClick={() => setSubTab('sell_phone')}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+            className={`flex items-center justify-between sm:justify-start gap-2 px-3.5 sm:px-5 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
               subTab === 'sell_phone'
                 ? 'bg-rose-600 text-white shadow-lg shadow-rose-600/25'
                 : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
             }`}
           >
-            <Smartphone className="w-4 h-4" />
-            Audit Pembelian HP Bekas (Overpay vs Sistem)
+            <div className="flex items-center gap-2">
+              <Smartphone className="w-4 h-4 shrink-0" />
+              <span>Audit Beli HP Bekas (Overpay)</span>
+            </div>
             {sellAudit.total_overpay_units > 0 && (
-              <span className="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-white text-rose-600">
+              <span className="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-white text-rose-600 shrink-0">
                 {sellAudit.total_overpay_units}
               </span>
             )}
           </button>
           <button
             onClick={() => setSubTab('cancellations')}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+            className={`flex items-center justify-between sm:justify-start gap-2 px-3.5 sm:px-5 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
               subTab === 'cancellations'
                 ? 'bg-amber-600 text-white shadow-lg shadow-amber-600/25'
                 : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
             }`}
           >
-            <FileWarning className="w-4 h-4" />
-            Audit Pembatalan Transaksi Kasir (Void)
+            <div className="flex items-center gap-2">
+              <FileWarning className="w-4 h-4 shrink-0" />
+              <span>Audit Pembatalan Nota (Void)</span>
+            </div>
             {cancelAudit.total_cancellations > 0 && (
-              <span className="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-white text-amber-600">
+              <span className="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-white text-amber-600 shrink-0">
                 {cancelAudit.total_cancellations}
               </span>
             )}
@@ -211,17 +215,17 @@ export const CashierAuditTab: React.FC = () => {
         </div>
 
         {subTab === 'sell_phone' && (
-          <div className="flex items-center gap-2 px-3">
+          <div className="flex items-center justify-end px-1 sm:px-3">
             <button
               onClick={() => setOnlyOverpay(!onlyOverpay)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors flex items-center gap-1.5 ${
+              className={`w-full sm:w-auto px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors flex items-center justify-center gap-1.5 cursor-pointer ${
                 onlyOverpay
                   ? 'bg-rose-500/20 text-rose-300 border-rose-500/40'
                   : 'bg-slate-800 text-slate-400 border-slate-700 hover:text-slate-200'
               }`}
             >
               <Filter className="w-3.5 h-3.5" />
-              {onlyOverpay ? 'Menampilkan Kasus Overpay Saja' : 'Tampilkan Hanya Overpay'}
+              <span>{onlyOverpay ? 'Tampilkan Semua Kasus' : 'Tampilkan Hanya Overpay'}</span>
             </button>
           </div>
         )}

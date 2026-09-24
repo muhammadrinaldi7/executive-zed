@@ -69,9 +69,9 @@ export const NavigationTabs: React.FC<NavigationTabsProps> = ({
   ];
 
   return (
-    <div className="w-full bg-slate-950/60 backdrop-blur-md border-b border-slate-900 sticky top-16 z-20 px-4 sm:px-6 lg:px-8 py-3">
-      <div className="max-w-7xl mx-auto flex items-center justify-between gap-4 overflow-x-auto no-scrollbar">
-        <nav className="flex space-x-2" aria-label="Tabs">
+    <div className="w-full bg-slate-950/60 backdrop-blur-md border-b border-slate-900 sticky top-16 z-20 px-3 sm:px-6 lg:px-8 py-2.5 sm:py-3 max-w-full overflow-hidden">
+      <div className="max-w-7xl mx-auto w-full min-w-0 overflow-x-auto no-scrollbar scrollbar-none touch-pan-x">
+        <nav className="flex space-x-2 min-w-max pb-0.5" aria-label="Tabs">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
@@ -80,7 +80,7 @@ export const NavigationTabs: React.FC<NavigationTabsProps> = ({
               <button
                 key={tab.id}
                 onClick={() => onTabChange(tab.id)}
-                className={`group relative flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-xs font-medium transition-all duration-200 whitespace-nowrap ${
+                className={`group relative flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-2.5 rounded-xl text-xs font-medium shrink-0 transition-all duration-200 whitespace-nowrap cursor-pointer ${
                   isActive
                     ? 'bg-gradient-to-r from-indigo-600 to-indigo-700 text-white shadow-lg shadow-indigo-600/25 border border-indigo-500/30'
                     : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/80 border border-transparent'

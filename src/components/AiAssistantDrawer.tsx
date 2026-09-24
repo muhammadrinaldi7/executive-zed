@@ -187,7 +187,7 @@ export const AiAssistantDrawer: React.FC<AiAssistantDrawerProps> = ({ overviewDa
 
       {/* Slide-over Drawer */}
       <div
-        className={`no-print fixed top-0 right-0 h-full w-full ${isExpanded ? 'sm:w-[780px] md:w-[860px]' : 'sm:w-[480px]'} bg-slate-950/95 transition-all duration-300 border-l border-slate-800/90 backdrop-blur-2xl z-50 flex flex-col shadow-2xl transition-transform duration-300 ease-in-out ${
+        className={`no-print fixed top-0 right-0 h-full w-full ${isExpanded ? 'sm:w-[780px] md:w-[860px]' : 'sm:w-[480px]'} max-w-full bg-slate-950/95 transition-all duration-300 border-l border-slate-800/90 backdrop-blur-2xl z-50 flex flex-col shadow-2xl overflow-hidden transition-transform duration-300 ease-in-out ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
@@ -255,7 +255,7 @@ export const AiAssistantDrawer: React.FC<AiAssistantDrawerProps> = ({ overviewDa
         </div>
 
         {/* Messages Stream */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        <div className="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-4">
           {messages.map((msg, idx) => {
             const isUser = msg.role === 'user';
             return (
@@ -270,14 +270,14 @@ export const AiAssistantDrawer: React.FC<AiAssistantDrawerProps> = ({ overviewDa
                 )}
 
                 <div
-                  className={`${isUser ? 'max-w-[85%]' : 'max-w-full flex-1'} rounded-2xl p-3.5 relative group ${
+                  className={`${
                     isUser
-                      ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/20 rounded-br-none'
-                      : 'bg-slate-900/90 text-slate-200 border border-slate-800/90 rounded-bl-none'
-                  }`}
+                      ? 'max-w-[85%] bg-indigo-600 text-white shadow-md shadow-indigo-600/20 rounded-br-none break-words [overflow-wrap:anywhere]'
+                      : 'flex-1 min-w-0 max-w-full bg-slate-900/90 text-slate-200 border border-slate-800/90 rounded-bl-none overflow-hidden'
+                  } rounded-2xl p-3.5 relative group`}
                 >
                   {isUser ? (
-                    <p className="whitespace-pre-wrap leading-relaxed">{msg.message}</p>
+                    <p className="whitespace-pre-wrap break-words [overflow-wrap:anywhere] leading-relaxed">{msg.message}</p>
                   ) : (
                     <MarkdownRenderer content={msg.message} />
                   )}
@@ -325,7 +325,7 @@ export const AiAssistantDrawer: React.FC<AiAssistantDrawerProps> = ({ overviewDa
           <div className="text-[10px] uppercase font-semibold text-slate-400 mb-1.5">
             Pertanyaan Rekomendasi
           </div>
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none w-full min-w-0">
             {QUICK_PROMPTS.map((prompt, idx) => (
               <button
                 key={idx}
@@ -354,12 +354,12 @@ export const AiAssistantDrawer: React.FC<AiAssistantDrawerProps> = ({ overviewDa
               onChange={(e) => setInputValue(e.target.value)}
               placeholder="Tanyakan analisis bisnis direksi..."
               disabled={isLoading}
-              className="flex-1 px-3.5 py-2.5 bg-slate-950 border border-slate-700/80 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+              className="flex-1 min-w-0 px-3.5 py-2.5 bg-slate-950 border border-slate-700/80 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
             />
             <button
               type="submit"
               disabled={isLoading || !inputValue.trim()}
-              className="p-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white shadow-md shadow-indigo-600/30 transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+              className="p-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white shadow-md shadow-indigo-600/30 transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed shrink-0"
             >
               <Send className="w-4 h-4" />
             </button>

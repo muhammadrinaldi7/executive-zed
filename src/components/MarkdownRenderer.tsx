@@ -20,12 +20,12 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, cla
   const normalized = normalizeMarkdown(content);
 
   return (
-    <div className={`text-xs text-slate-200 leading-relaxed overflow-hidden ${className}`}>
+    <div className={`text-xs text-slate-200 leading-relaxed overflow-hidden break-words [overflow-wrap:anywhere] max-w-full ${className}`}>
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         components={{
           table: ({ children }) => (
-            <div className="my-3 w-full overflow-x-auto rounded-xl border border-slate-700/80 bg-slate-950/90 shadow-lg">
+            <div className="my-3 w-full max-w-full overflow-x-auto rounded-xl border border-slate-700/80 bg-slate-950/90 shadow-lg scrollbar-thin">
               <table className="w-full border-collapse text-[11px] text-slate-300">
                 {children}
               </table>
@@ -57,7 +57,7 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, cla
             </td>
           ),
           p: ({ children }) => (
-            <p className="mb-2.5 leading-relaxed text-slate-200 last:mb-0">
+            <p className="mb-2.5 leading-relaxed text-slate-200 last:mb-0 break-words [overflow-wrap:anywhere]">
               {children}
             </p>
           ),
@@ -67,37 +67,44 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, cla
             </strong>
           ),
           ul: ({ children }) => (
-            <ul className="list-disc pl-4 space-y-1 my-2 text-slate-200">
+            <ul className="list-disc pl-4 space-y-1 my-2 text-slate-200 break-words [overflow-wrap:anywhere]">
               {children}
             </ul>
           ),
           ol: ({ children }) => (
-            <ol className="list-decimal pl-4 space-y-1 my-2 text-slate-200">
+            <ol className="list-decimal pl-4 space-y-1 my-2 text-slate-200 break-words [overflow-wrap:anywhere]">
               {children}
             </ol>
           ),
           li: ({ children }) => (
-            <li className="leading-relaxed">
+            <li className="leading-relaxed break-words [overflow-wrap:anywhere]">
               {children}
             </li>
           ),
           h1: ({ children }) => (
-            <h1 className="text-sm font-bold text-white mt-3.5 mb-1.5 pb-1 border-b border-slate-800">
+            <h1 className="text-sm font-bold text-white mt-3.5 mb-1.5 pb-1 border-b border-slate-800 break-words [overflow-wrap:anywhere]">
               {children}
             </h1>
           ),
           h2: ({ children }) => (
-            <h2 className="text-xs font-bold text-white mt-3 mb-1">
+            <h2 className="text-xs font-bold text-white mt-3 mb-1 break-words [overflow-wrap:anywhere]">
               {children}
             </h2>
           ),
           h3: ({ children }) => (
-            <h3 className="text-xs font-semibold text-indigo-300 mt-2.5 mb-1">
+            <h3 className="text-xs font-semibold text-indigo-300 mt-2.5 mb-1 break-words [overflow-wrap:anywhere]">
               {children}
             </h3>
           ),
-          code: ({ children }) => (
-            <code className="px-1.5 py-0.5 rounded bg-slate-800 text-indigo-300 font-mono text-[10px]">
+          pre: ({ children }) => (
+            <div className="my-2.5 w-full max-w-full overflow-x-auto rounded-xl border border-slate-800 bg-slate-950 p-2.5 shadow-inner">
+              <pre className="text-[11px] font-mono text-indigo-300 whitespace-pre overflow-x-auto">
+                {children}
+              </pre>
+            </div>
+          ),
+          code: ({ children, ...props }) => (
+            <code className="px-1.5 py-0.5 rounded bg-slate-800 text-indigo-300 font-mono text-[10px] break-all inline-block max-w-full overflow-x-auto align-middle" {...props}>
               {children}
             </code>
           ),

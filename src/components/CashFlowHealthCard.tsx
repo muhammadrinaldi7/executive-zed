@@ -46,12 +46,12 @@ export const CashFlowHealthCard: React.FC<CashFlowHealthCardProps> = ({ summary,
     }).format(val);
 
   return (
-    <div className="glass-card rounded-2xl p-6 border border-slate-800/80 hover:border-slate-700/80 transition-all shadow-xl">
+    <div className="glass-card rounded-2xl p-4 sm:p-6 border border-slate-800/80 hover:border-slate-700/80 transition-all shadow-xl max-w-full overflow-hidden">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-800/70">
         <div>
           <div className="flex items-center gap-2">
-            <span className="p-2 rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-indigo-400">
+            <span className="p-2 rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 shrink-0">
               <Wallet className="w-5 h-5" />
             </span>
             <div>
@@ -66,14 +66,14 @@ export const CashFlowHealthCard: React.FC<CashFlowHealthCardProps> = ({ summary,
         </div>
 
         {/* Status Badge */}
-        <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full border text-xs font-semibold ${statusColor} shrink-0`}>
+        <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full border text-xs font-semibold ${statusColor} shrink-0 self-start sm:self-auto`}>
           <StatusIcon className="w-4 h-4" />
           <span>{statusText}</span>
         </div>
       </div>
 
       {/* Metrics Row */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 my-5">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 my-5">
         {/* Realisasi Kas */}
         <div className="p-4 rounded-xl bg-slate-900/50 border border-slate-800/60">
           <div className="flex items-center justify-between text-xs text-slate-400 mb-1">
@@ -121,10 +121,11 @@ export const CashFlowHealthCard: React.FC<CashFlowHealthCardProps> = ({ summary,
 
       {/* Visual Progress Bar */}
       <div className="space-y-1.5 pt-2">
-        <div className="flex justify-between text-xs text-slate-400">
+        <div className="flex flex-col sm:flex-row sm:justify-between text-xs text-slate-400 gap-1">
           <span>Komposisi Realisasi:</span>
-          <span>
-            <strong className="text-emerald-400">{collectionRate.toFixed(1)}% Lunas</strong> &bull;{' '}
+          <span className="flex flex-wrap items-center gap-1.5">
+            <strong className="text-emerald-400">{collectionRate.toFixed(1)}% Lunas</strong>
+            <span>&bull;</span>
             <strong className="text-amber-400">{(100 - collectionRate).toFixed(1)}% Piutang</strong>
           </span>
         </div>

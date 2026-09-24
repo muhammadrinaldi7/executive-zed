@@ -81,7 +81,7 @@ export const DashboardPage: React.FC = () => {
   }, [filters, refreshKey, activeTab]);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">
+    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col w-full max-w-full overflow-x-hidden">
       {/* 1. Header Navigation */}
       <Header
         filterOptions={filterOptions}
@@ -96,7 +96,7 @@ export const DashboardPage: React.FC = () => {
       <FilterBar filterOptions={filterOptions} />
 
       {/* 4. Main Dashboard Body */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6 min-w-0">
         {/* Printable Official Document Header (Visible only on print/PDF) */}
         <PrintReportHeader overview={overview} />
 

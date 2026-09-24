@@ -135,7 +135,7 @@ export function exportDashboardToCsv(overview: DashboardOverviewData, periodLabe
   
   const link = document.createElement('a');
   link.setAttribute('href', url);
-  const fileName = `Laporan_Eksekutif_Tokopon_${new Date().toISOString().slice(0, 10)}.csv`;
+  const fileName = `Laporan_Eksekutif_ZED_${new Date().toISOString().slice(0, 10)}.csv`;
   link.setAttribute('download', fileName);
   document.body.appendChild(link);
   link.click();

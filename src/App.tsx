@@ -15,7 +15,7 @@ const MainApp: React.FC = () => {
           <TrendingUp className="w-6 h-6 stroke-[2.5]" />
         </div>
         <div className="text-white font-bold text-base tracking-tight">
-          Tokopon Executive Intelligence
+          ZED Executive Intelligence
         </div>
         <div className="text-slate-400 text-xs mt-1">
           Memuat sesi otorisasi direksi...
