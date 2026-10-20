@@ -7,6 +7,7 @@ import {
   ShieldAlert,
   BadgePercent,
   FolderKanban,
+  Landmark,
 } from 'lucide-react';
 
 interface NavigationTabsProps {
@@ -33,6 +34,14 @@ export const NavigationTabs: React.FC<NavigationTabsProps> = ({
       label: 'Finansial & Tren',
       sublabel: 'Overview & Arus Kas',
       icon: LayoutDashboard,
+    },
+    {
+      id: 'financial_accurate',
+      label: 'Keuangan Accurate',
+      sublabel: 'Piutang, Hutang & Kas',
+      icon: Landmark,
+      badge: 'Real GL',
+      badgeColor: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
     },
     {
       id: 'staff',

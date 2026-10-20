@@ -20,6 +20,10 @@ import type {
   ProjectSalesDetailItem,
   BranchTransactionsResponse,
   PiutangReportData,
+  FinancialArApSummary,
+  FinancialReceivablesReport,
+  FinancialPayablesReport,
+  CashBankReport,
 } from '../types';
 
 export const executiveApi = {
@@ -241,6 +245,80 @@ export const executiveApi = {
     const response = await apiClient.get<ApiResponse<PiutangReportData>>('/piutang', {
       params,
     });
+    return response.data;
+  },
+
+  /**
+   * Get Accurate Real-time Financial AR & AP Summary.
+   */
+  async getFinancialSummary(params?: {
+    database_source?: string;
+    as_of_date?: string;
+    business_unit_id?: number | string | null;
+    force_refresh?: boolean;
+  }) {
+    const response = await apiClient.get<ApiResponse<FinancialArApSummary>>(
+      '/financial/ar-ap-summary',
+      { params }
+    );
+    return response.data;
+  },
+
+  /**
+   * Get Detailed Outstanding Receivables (Piutang AR) from Accurate.
+   */
+  async getFinancialReceivables(params?: {
+    database_source?: string;
+    as_of_date?: string;
+    business_unit_id?: number | string | null;
+    force_refresh?: boolean;
+  }) {
+    const response = await apiClient.get<ApiResponse<FinancialReceivablesReport>>(
+      '/financial/receivables',
+      { params }
+    );
+    return response.data;
+  },
+
+  /**
+   * Get Detailed Outstanding Payables (Hutang AP) from Accurate.
+   */
+  async getFinancialPayables(params?: {
+    database_source?: string;
+    as_of_date?: string;
+    business_unit_id?: number | string | null;
+    force_refresh?: boolean;
+  }) {
+    const response = await apiClient.get<ApiResponse<FinancialPayablesReport>>(
+      '/financial/payables',
+      { params }
+    );
+    return response.data;
+  },
+
+  /**
+   * Get Cash & Bank Balances from Accurate.
+   */
+  async getFinancialCashBank(params?: {
+    database_source?: string;
+    as_of_date?: string;
+    business_unit_id?: number | string | null;
+    force_refresh?: boolean;
+  }) {
+    const response = await apiClient.get<ApiResponse<CashBankReport>>(
+      '/financial/cash-bank',
+      { params }
+    );
+    return response.data;
+  },
+
+  /**
+   * Force Sync Financial Data from Accurate.
+   */
+  async syncFinancial(params?: { database_source?: string; as_of_date?: string }) {
+    const response = await apiClient.post<
+      ApiResponse<{ summary: FinancialArApSummary; cash_bank: CashBankReport; synced_at: string }>
+    >('/financial/sync', params);
     return response.data;
   },
 };

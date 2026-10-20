@@ -6,6 +6,7 @@ import { Header } from '../components/Header';
 import { NavigationTabs } from '../components/NavigationTabs';
 import { FilterBar } from '../components/FilterBar';
 import { FinancialOverviewTab } from '../components/tabs/FinancialOverviewTab';
+import { AccurateFinancialTab } from '../components/tabs/AccurateFinancialTab';
 import { StaffKpiTab } from '../components/tabs/StaffKpiTab';
 import { BrandAnalyticsTab } from '../components/tabs/BrandAnalyticsTab';
 import { CashierAuditTab } from '../components/tabs/CashierAuditTab';
@@ -118,6 +119,8 @@ export const DashboardPage: React.FC = () => {
             isLoading={isLoadingOverview}
           />
         )}
+
+        {activeTab === 'financial_accurate' && <AccurateFinancialTab />}
 
         {activeTab === 'staff' && <StaffKpiTab />}
 

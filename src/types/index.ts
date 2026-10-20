@@ -130,6 +130,7 @@ export interface FilterOptions {
   business_units: Array<{ id: number; name: string; code: string }>;
   branches: Array<{ id: number; name: string; business_unit_id: number }>;
   order_stores: string[];
+  categories?: string[];
   date_presets: Array<{ value: string; label: string }>;
 }
 
@@ -154,6 +155,7 @@ export interface FilterParams {
   end_date?: string;
   business_unit_id?: number | string | null;
   branch?: string | null;
+  category?: string | null;
   sort_by?: 'revenue' | 'qty';
   limit?: number;
 }
@@ -174,7 +176,7 @@ export interface AiChatResponse {
 
 // ─── NEW EXECUTIVE MODULE TYPES ──────────────────────────────────
 
-export type ExecutiveTab = 'overview' | 'staff' | 'brands' | 'audit' | 'promos' | 'projects';
+export type ExecutiveTab = 'overview' | 'financial_accurate' | 'staff' | 'brands' | 'audit' | 'promos' | 'projects';
 
 export interface SalesPersonKpi {
   rank: number;
@@ -532,4 +534,111 @@ export interface PiutangReportData {
   };
   piutang_transactions: PiutangMethodItem[];
   details: PiutangTransactionDetail[];
+}
+
+// ─── ACCURATE REAL FINANCIAL TYPES ────────────────────────────────
+
+export interface FinancialAgingBucket {
+  label: string;
+  count: number;
+  amount: number;
+}
+
+export interface FinancialAgingSummary {
+  days_0_7: FinancialAgingBucket;
+  days_8_14: FinancialAgingBucket;
+  days_15_30: FinancialAgingBucket;
+  days_over_30: FinancialAgingBucket;
+}
+
+export interface FinancialDebtor {
+  customer_name: string;
+  customer_no: string;
+  invoice_count: number;
+  total_amount: number;
+  total_owing: number;
+}
+
+export interface FinancialVendor {
+  vendor_name: string;
+  vendor_no: string;
+  invoice_count: number;
+  total_amount: number;
+  total_owing: number;
+}
+
+export interface FinancialInvoiceItem {
+  id: number;
+  invoice_no: string;
+  trans_date: string;
+  due_date: string;
+  customer_name?: string;
+  vendor_name?: string;
+  total_amount: number;
+  prime_owing: number;
+  aging_days: number;
+  status: string;
+}
+
+export interface FinancialReceivablesReport {
+  business_unit: string;
+  database_source: string;
+  as_of_date: string;
+  total_receivables: number;
+  total_invoice_amount: number;
+  invoice_count: number;
+  aging_summary: FinancialAgingSummary;
+  top_debtors: FinancialDebtor[];
+  invoices: FinancialInvoiceItem[];
+  last_synced_at: string;
+}
+
+export interface FinancialPayablesReport {
+  business_unit: string;
+  database_source: string;
+  as_of_date: string;
+  total_payables: number;
+  total_invoice_amount: number;
+  invoice_count: number;
+  aging_summary: FinancialAgingSummary;
+  top_vendors: FinancialVendor[];
+  invoices: FinancialInvoiceItem[];
+  last_synced_at: string;
+}
+
+export interface CashBankAccountItem {
+  id: number;
+  account_no: string;
+  name: string;
+  balance: number;
+}
+
+export interface CashBankReport {
+  business_unit: string;
+  database_source: string;
+  as_of_date: string;
+  total_liquid_cash: number;
+  bank_accounts: CashBankAccountItem[];
+  cash_registers: CashBankAccountItem[];
+  last_synced_at: string;
+}
+
+export interface FinancialArApSummary {
+  database_source: string;
+  business_unit: string;
+  as_of_date: string;
+  receivables: {
+    total_amount: number;
+    invoice_count: number;
+    aging: FinancialAgingSummary;
+    top_debtors: FinancialDebtor[];
+  };
+  payables: {
+    total_amount: number;
+    invoice_count: number;
+    aging: FinancialAgingSummary;
+    top_vendors: FinancialVendor[];
+  };
+  net_working_capital: number;
+  last_synced_at: string;
 }

@@ -7,6 +7,7 @@ interface FilterContextType {
   setCustomDateRange: (start: string, end: string) => void;
   setBusinessUnitId: (buId: string | number | null) => void;
   setBranch: (branch: string | null) => void;
+  setCategory: (category: string | null) => void;
   setSortBy: (sort: 'revenue' | 'qty') => void;
   refreshKey: number;
   lastRefreshed: Date;
@@ -22,6 +23,7 @@ export const FilterProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     date_range: 'this_month',
     business_unit_id: null,
     branch: null,
+    category: null,
     sort_by: 'revenue',
     limit: 10,
   });
@@ -81,6 +83,14 @@ export const FilterProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     refreshData();
   };
 
+  const setCategory = (category: string | null) => {
+    setFilters((prev) => ({
+      ...prev,
+      category: category === '' ? null : category,
+    }));
+    refreshData();
+  };
+
   const setSortBy = (sort: 'revenue' | 'qty') => {
     setFilters((prev) => ({
       ...prev,
@@ -97,6 +107,7 @@ export const FilterProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         setCustomDateRange,
         setBusinessUnitId,
         setBranch,
+        setCategory,
         setSortBy,
         refreshKey,
         lastRefreshed,

@@ -85,7 +85,8 @@ export const Header: React.FC<HeaderProps> = ({ filterOptions, isLoading, overvi
             )}
 
             {/* Export CSV / Excel Button */}
-            {/* <button
+            <button
+              type="button"
               onClick={handleExportCsv}
               disabled={!overview || isLoading}
               title="Unduh Laporan Format Excel/CSV"
@@ -93,17 +94,18 @@ export const Header: React.FC<HeaderProps> = ({ filterOptions, isLoading, overvi
             >
               <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-400" />
               <span className="hidden md:inline">Excel/CSV</span>
-            </button> */}
+            </button>
 
             {/* Print / PDF Button */}
-            {/* <button
+            <button
+              type="button"
               onClick={handlePrintPdf}
               title="Cetak atau Simpan PDF Laporan Resmi"
               className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 bg-slate-900 hover:bg-indigo-950/40 border border-slate-800 hover:border-indigo-500/40 text-slate-300 hover:text-indigo-300 rounded-lg text-xs font-medium transition-all cursor-pointer"
             >
               <Printer className="w-3.5 h-3.5 text-indigo-400" />
               <span className="hidden md:inline">Cetak PDF</span>
-            </button> */}
+            </button>
 
             {/* Auto-Refresh Toggle Pill */}
             <button

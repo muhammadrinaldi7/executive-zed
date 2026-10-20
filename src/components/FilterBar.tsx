@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useFilter } from '../context/FilterContext';
 import type { FilterOptions } from '../types';
-import { Calendar, Store, RotateCcw, Building2 } from 'lucide-react';
+import { Calendar, Store, RotateCcw, Building2, Layers } from 'lucide-react';
 
 interface FilterBarProps {
   filterOptions?: FilterOptions | null;
@@ -25,6 +25,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({ filterOptions }) => {
     setCustomDateRange,
     setBranch,
     setBusinessUnitId,
+    setCategory,
   } = useFilter();
 
   const [customStart, setCustomStart] = useState<string>(filters.start_date || '');
@@ -41,6 +42,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({ filterOptions }) => {
     setDateRange('this_month');
     setBranch(null);
     setBusinessUnitId(null);
+    setCategory(null);
     setCustomStart('');
     setCustomEnd('');
   };
@@ -48,7 +50,8 @@ export const FilterBar: React.FC<FilterBarProps> = ({ filterOptions }) => {
   const isFiltered =
     filters.date_range !== 'this_month' ||
     filters.branch !== null ||
-    filters.business_unit_id !== null;
+    filters.business_unit_id !== null ||
+    filters.category !== null;
 
   // Extract unique list of branch/store names
   const availableStores = filterOptions?.order_stores && filterOptions.order_stores.length > 0
@@ -150,11 +153,39 @@ export const FilterBar: React.FC<FilterBarProps> = ({ filterOptions }) => {
             </select>
           </div>
 
+          {/* Product Category Dropdown */}
+          <div className="relative flex items-center flex-1 sm:flex-none min-w-[140px]">
+            <div className="absolute left-2.5 text-slate-400 pointer-events-none">
+              <Layers className="w-3.5 h-3.5" />
+            </div>
+            <select
+              value={filters.category ?? ''}
+              onChange={(e) => setCategory(e.target.value || null)}
+              className="w-full pl-8 pr-7 py-1 bg-slate-950 border border-slate-700/80 rounded-lg text-xs font-medium text-white focus:outline-none focus:ring-1 focus:ring-indigo-500 cursor-pointer truncate"
+            >
+              <option value="">Semua Kategori</option>
+              {filterOptions?.categories && filterOptions.categories.length > 0 ? (
+                filterOptions.categories.map((cat) => (
+                  <option key={cat} value={cat}>
+                    {cat}
+                  </option>
+                ))
+              ) : (
+                <>
+                  <option value="iPhone Second">iPhone Second</option>
+                  <option value="iPhone Baru">iPhone Baru</option>
+                  <option value="Aksesoris">Aksesoris</option>
+                  <option value="Smartphone">Smartphone</option>
+                </>
+              )}
+            </select>
+          </div>
+
           {/* Reset Filters Pill */}
           {isFiltered && (
             <button
               onClick={handleResetFilters}
-              title="Kembalikan filter ke Bulan Ini (Semua Cabang)"
+              title="Kembalikan filter ke Bulan Ini (Semua Cabang & Kategori)"
               className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition-colors cursor-pointer shrink-0"
             >
               <RotateCcw className="w-3 h-3 text-slate-400" />
