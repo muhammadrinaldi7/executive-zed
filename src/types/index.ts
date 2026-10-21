@@ -126,11 +126,20 @@ export interface PaymentMethodMetric {
   share_percentage: number;
 }
 
+export interface CategoryFilterItem {
+  name: string;
+  business_unit_id?: number | null;
+  business_unit_ids?: number[];
+  is_all_bu?: boolean;
+  bu_count?: number;
+}
+
 export interface FilterOptions {
   business_units: Array<{ id: number; name: string; code: string }>;
-  branches: Array<{ id: number; name: string; business_unit_id: number }>;
+  branches: Array<{ id: number | string; name: string; business_unit_id: number }>;
   order_stores: string[];
-  categories?: string[];
+  categories?: Array<string | CategoryFilterItem>;
+  category_names?: string[];
   date_presets: Array<{ value: string; label: string }>;
 }
 
@@ -154,8 +163,8 @@ export interface FilterParams {
   start_date?: string;
   end_date?: string;
   business_unit_id?: number | string | null;
-  branch?: string | null;
-  category?: string | null;
+  branch?: string | string[] | null;
+  category?: string | string[] | null;
   sort_by?: 'revenue' | 'qty';
   limit?: number;
 }

@@ -4,6 +4,7 @@ import { useFilter } from '../context/FilterContext';
 import type { FilterOptions, DashboardOverviewData } from '../types';
 import { exportDashboardToCsv } from '../utils/exportCsv';
 import { ZedLogo } from './ZedLogo';
+import { SearchableSelect } from './SearchableSelect';
 import {
   RefreshCw,
   LogOut,
@@ -65,22 +66,20 @@ export const Header: React.FC<HeaderProps> = ({ filterOptions, isLoading, overvi
           <div className="flex items-center gap-2 sm:gap-3">
             {/* Business Unit Selector */}
             {filterOptions?.business_units && filterOptions.business_units.length > 1 && (
-              <div className="relative hidden md:flex items-center">
-                <div className="absolute left-2.5 text-slate-400 pointer-events-none">
-                  <Building2 className="w-3.5 h-3.5" />
-                </div>
-                <select
-                  value={filters.business_unit_id ?? ''}
-                  onChange={(e) => setBusinessUnitId(e.target.value || null)}
-                  className="pl-8 pr-7 py-1.5 bg-slate-900/90 border border-slate-700/80 rounded-lg text-xs font-medium text-white focus:outline-none focus:ring-1 focus:ring-indigo-500 cursor-pointer"
-                >
-                  <option value="">Semua Unit Bisnis (Konsolidasi)</option>
-                  {filterOptions.business_units.map((bu) => (
-                    <option key={bu.id} value={bu.id}>
-                      BU: {bu.name} ({bu.code})
-                    </option>
-                  ))}
-                </select>
+              <div className="hidden md:block min-w-[200px]">
+                <SearchableSelect
+                  value={filters.business_unit_id}
+                  onChange={(val) => setBusinessUnitId(val)}
+                  options={filterOptions.business_units.map((bu) => ({
+                    value: bu.id,
+                    label: bu.name,
+                    subLabel: `Kode: ${bu.code}`,
+                    badge: `BU #${bu.id}`,
+                  }))}
+                  allOptionLabel="Semua Unit Bisnis"
+                  placeholder="Pilih Unit Bisnis..."
+                  icon={<Building2 className="w-3.5 h-3.5" />}
+                />
               </div>
             )}
 

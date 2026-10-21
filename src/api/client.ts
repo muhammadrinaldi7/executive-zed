@@ -13,12 +13,28 @@ export const apiClient = axios.create({
   },
 });
 
-// Request interceptor to attach Bearer token
+// Request interceptor to attach Bearer token and format array params
 apiClient.interceptors.request.use((config) => {
   const token = localStorage.getItem('executive_token');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
+
+  // Format array query params (e.g. branch, category) to comma-separated strings
+  if (config.params) {
+    const params = { ...config.params };
+    let hasArray = false;
+    for (const key of Object.keys(params)) {
+      if (Array.isArray(params[key])) {
+        params[key] = params[key].join(',');
+        hasArray = true;
+      }
+    }
+    if (hasArray) {
+      config.params = params;
+    }
+  }
+
   return config;
 }, (error) => {
   return Promise.reject(error);

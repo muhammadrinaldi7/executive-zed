@@ -221,7 +221,7 @@ export const executiveApi = {
     date?: string;
     project?: string;
     search?: string;
-    branch?: string | null;
+    branch?: string | string[] | null;
     business_unit_id?: number | string | null;
   }) {
     const response = await apiClient.get<ApiResponse<ProjectSalesDetailItem[]>>('/project-sales/detail', {

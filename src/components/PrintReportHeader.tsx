@@ -46,7 +46,17 @@ export const PrintReportHeader: React.FC<PrintReportHeaderProps> = ({ overview }
         {filters.branch && (
           <div>
             <span className="font-semibold text-slate-700">Cabang: </span>
-            <span className="font-bold text-slate-900">{filters.branch}</span>
+            <span className="font-bold text-slate-900">
+              {Array.isArray(filters.branch) ? filters.branch.join(', ') : filters.branch}
+            </span>
+          </div>
+        )}
+        {filters.category && (
+          <div>
+            <span className="font-semibold text-slate-700">Kategori: </span>
+            <span className="font-bold text-slate-900">
+              {Array.isArray(filters.category) ? filters.category.join(', ') : filters.category}
+            </span>
           </div>
         )}
         {overview?.kpi?.summary && (

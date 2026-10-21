@@ -250,7 +250,9 @@ export const AiAssistantDrawer: React.FC<AiAssistantDrawerProps> = ({ overviewDa
   };
 
   const activePeriodLabel = filters.date_range?.replace('_', ' ').toUpperCase() || 'BULAN INI';
-  const activeBranchLabel = filters.branch || 'Semua Cabang';
+  const activeBranchLabel = Array.isArray(filters.branch)
+    ? (filters.branch.length > 0 ? filters.branch.join(', ') : 'Semua Cabang')
+    : (filters.branch || 'Semua Cabang');
 
   const filteredPrompts = activeCategory === 'all'
     ? QUICK_PROMPTS

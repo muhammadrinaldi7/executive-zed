@@ -6,8 +6,8 @@ interface FilterContextType {
   setDateRange: (range: string) => void;
   setCustomDateRange: (start: string, end: string) => void;
   setBusinessUnitId: (buId: string | number | null) => void;
-  setBranch: (branch: string | null) => void;
-  setCategory: (category: string | null) => void;
+  setBranch: (branch: string | string[] | null) => void;
+  setCategory: (category: string | string[] | null) => void;
   setSortBy: (sort: 'revenue' | 'qty') => void;
   refreshKey: number;
   lastRefreshed: Date;
@@ -71,22 +71,27 @@ export const FilterProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       ...prev,
       business_unit_id: buId === '' ? null : buId,
       branch: null, // Reset branch when BU changes
+      category: null, // Reset category when BU changes
     }));
     refreshData();
   };
 
-  const setBranch = (branch: string | null) => {
+  const setBranch = (branch: string | string[] | null) => {
     setFilters((prev) => ({
       ...prev,
-      branch: branch === '' ? null : branch,
+      branch: Array.isArray(branch)
+        ? (branch.length === 0 ? null : branch)
+        : (branch === '' ? null : branch),
     }));
     refreshData();
   };
 
-  const setCategory = (category: string | null) => {
+  const setCategory = (category: string | string[] | null) => {
     setFilters((prev) => ({
       ...prev,
-      category: category === '' ? null : category,
+      category: Array.isArray(category)
+        ? (category.length === 0 ? null : category)
+        : (category === '' ? null : category),
     }));
     refreshData();
   };

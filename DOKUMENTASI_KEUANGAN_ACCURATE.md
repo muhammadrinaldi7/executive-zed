@@ -57,20 +57,21 @@ Sebelum integrasi ini, dashboard eksekutif mengambil angka piutang dari tabel pe
 
 | No | Lokasi File | Status | Fungsi Utama |
 |---|---|---|---|
-| 1 | `src/types/index.ts` | **Dimodifikasi** | Menambahkan tipe data TypeScript untuk modul keuangan, tipe `categories` di `FilterOptions`, dan properti `category` di `FilterParams`. |
+| 1 | `src/types/index.ts` | **Dimodifikasi** | Menambahkan tipe data TypeScript untuk modul keuangan, tipe `categories` & `CategoryFilterItem` di `FilterOptions`, dan properti `category` di `FilterParams`. |
 | 2 | `src/api/executive.ts` | **Dimodifikasi** | Menyediakan fungsi pemanggil API backend: `getFinancialArApSummary()`, `getFinancialReceivables()`, `getFinancialPayables()`, `getFinancialCashBank()`, dan `syncFinancialAccurate()`. |
-| 3 | `src/context/FilterContext.tsx` | **Dimodifikasi** | Menambahkan state `filters.category` dan fungsi `setCategory` untuk mengontrol filter kategori produk secara reaktif di seluruh dashboard. |
-| 4 | `src/components/FilterBar.tsx` | **Dimodifikasi** | Menambahkan dropdown filter **"Kategori Produk"** (dengan ikon *Layers*) bersebelahan dengan dropdown Cabang dan Unit Bisnis. |
-| 5 | `src/components/NavigationTabs.tsx` | **Dimodifikasi** | Menambahkan tombol navigasi baru **"Keuangan Accurate"** dengan ikon Landmark dan badge status *"Real GL"*. |
-| 6 | `src/pages/DashboardPage.tsx` | **Dimodifikasi** | Merender tab `<AccurateFinancialTab />` ketika pengguna memilih menu Keuangan Accurate. |
-| 7 | `src/components/tabs/AccurateFinancialTab.tsx` | **File Baru** | Halaman utama modul keuangan yang mengelola siklus data, pemanggilan API, dan modal pop-up detail faktur. |
-| 8 | `src/components/financial/FinancialHeaderSyncBar.tsx` | **File Baru** | Bar informasi status koneksi Accurate Online, waktu sinkronisasi terakhir, tanggal acuan data, dan tombol sinkronisasi ulang. |
-| 9 | `src/components/financial/ArApOverviewCards.tsx` | **File Baru** | 4 Kartu KPI Utama: Total Piutang Pelanggan, Total Hutang Supplier, Modal Kerja Bersih, dan Kas/Bank Likuid. |
-| 10 | `src/components/financial/ArAgingCard.tsx` | **File Baru** | Visualisasi klasifikasi umur piutang (0–7 hari, 8–14 hari, 15–30 hari, >30 hari) serta daftar 5 debitur penunggak terbesar. |
-| 11 | `src/components/financial/ApAgingCard.tsx` | **File Baru** | Visualisasi jatuh tempo hutang ke supplier dan daftar 5 distributor dengan kewajiban pembayaran terbesar. |
-| 12 | `src/components/financial/CashBankGrid.tsx` | **File Baru** | Kartu rincian saldo rekening bank (BCA, BNI, Mandiri) dan uang fisik kasir di brankas toko. |
-| 13 | `src/components/financial/InvoiceDrilldownModal.tsx` | **File Baru** | Jendela modal interaktif untuk melihat seluruh daftar nomor faktur belum lunas lengkap dengan fitur filter dan pencarian nomor nota/nama pelanggan. |
-| 14 | `src/components/Header.tsx` | **Dimodifikasi** | Pengaktifan tombol cetak laporan dan pembersihan fungsi yang tidak terpakai. |
+| 3 | `src/context/FilterContext.tsx` | **Dimodifikasi** | Menambahkan state `filters.category` dan fungsi `setCategory` untuk mengontrol filter kategori produk secara reaktif di seluruh dashboard. Otomatis mereset branch & category saat BU berganti. |
+| 4 | `src/components/SearchableSelect.tsx` | **File Baru** | Komponen dropdown modern dengan fitur pencarian teks instan (searchable combobox), keyboard accessibility, visual badge, dan click-outside detection. |
+| 5 | `src/components/FilterBar.tsx` | **Dimodifikasi** | Menerapkan `SearchableSelect` untuk Business Unit, Cabang, dan Kategori Produk dengan logika bertingkat (*cascading filter*): memilih BU secara dinamis menyaring daftar cabang dan kategori yang relevan. |
+| 6 | `src/components/NavigationTabs.tsx` | **Dimodifikasi** | Menambahkan tombol navigasi baru **"Keuangan Accurate"** dengan ikon Landmark dan badge status *"Real GL"*. |
+| 7 | `src/pages/DashboardPage.tsx` | **Dimodifikasi** | Merender tab `<AccurateFinancialTab />` ketika pengguna memilih menu Keuangan Accurate. |
+| 8 | `src/components/tabs/AccurateFinancialTab.tsx` | **File Baru** | Halaman utama modul keuangan yang mengelola siklus data, pemanggilan API, dan modal pop-up detail faktur. |
+| 9 | `src/components/financial/FinancialHeaderSyncBar.tsx` | **File Baru** | Bar informasi status koneksi Accurate Online, waktu sinkronisasi terakhir, tanggal acuan data, dan tombol sinkronisasi ulang. |
+| 10 | `src/components/financial/ArApOverviewCards.tsx` | **File Baru** | 4 Kartu KPI Utama: Total Piutang Pelanggan, Total Hutang Supplier, Modal Kerja Bersih, dan Kas/Bank Likuid. |
+| 11 | `src/components/financial/ArAgingCard.tsx` | **File Baru** | Visualisasi klasifikasi umur piutang (0–7 hari, 8–14 hari, 15–30 hari, >30 hari) serta daftar 5 debitur penunggak terbesar. |
+| 12 | `src/components/financial/ApAgingCard.tsx` | **File Baru** | Visualisasi jatuh tempo hutang ke supplier dan daftar 5 distributor dengan kewajiban pembayaran terbesar. |
+| 13 | `src/components/financial/CashBankGrid.tsx` | **File Baru** | Kartu rincian saldo rekening bank (BCA, BNI, Mandiri) dan uang fisik kasir di brankas toko. |
+| 14 | `src/components/financial/InvoiceDrilldownModal.tsx` | **File Baru** | Jendela modal interaktif untuk melihat seluruh daftar nomor faktur belum lunas lengkap dengan fitur filter dan pencarian nomor nota/nama pelanggan. |
+| 15 | `src/components/Header.tsx` | **Dimodifikasi** | Menggunakan `SearchableSelect` pada pemilihan Unit Bisnis di header desktop. |
 
 ---
 
