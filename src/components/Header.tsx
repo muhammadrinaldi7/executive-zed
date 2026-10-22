@@ -2,16 +2,8 @@ import React from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useFilter } from '../context/FilterContext';
 import type { FilterOptions, DashboardOverviewData } from '../types';
-import { exportDashboardToCsv } from '../utils/exportCsv';
 import { ZedLogo } from './ZedLogo';
-import { SearchableSelect } from './SearchableSelect';
-import {
-  RefreshCw,
-  LogOut,
-  Building2,
-  Printer,
-  FileSpreadsheet,
-} from 'lucide-react';
+import { RefreshCw, LogOut } from 'lucide-react';
 
 interface HeaderProps {
   filterOptions?: FilterOptions | null;
@@ -19,11 +11,9 @@ interface HeaderProps {
   overview?: DashboardOverviewData | null;
 }
 
-export const Header: React.FC<HeaderProps> = ({ filterOptions, isLoading, overview }) => {
+export const Header: React.FC<HeaderProps> = ({ isLoading }) => {
   const { user, logout } = useAuth();
   const {
-    filters,
-    setBusinessUnitId,
     lastRefreshed,
     refreshData,
     isAutoRefresh,
@@ -35,16 +25,6 @@ export const Header: React.FC<HeaderProps> = ({ filterOptions, isLoading, overvi
     minute: '2-digit',
     second: '2-digit',
   });
-
-  const handleExportCsv = () => {
-    if (!overview) return;
-    const periodLabel = filters.date_range || (filters.start_date ? `${filters.start_date} s/d ${filters.end_date}` : 'Periode Terpilih');
-    exportDashboardToCsv(overview, periodLabel);
-  };
-
-  const handlePrintPdf = () => {
-    window.print();
-  };
 
   return (
     <header className="no-print sticky top-0 z-40 w-full border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-xl">
@@ -62,50 +42,8 @@ export const Header: React.FC<HeaderProps> = ({ filterOptions, isLoading, overvi
             </div>
           </div>
 
-          {/* Right: BU Selector, Export Actions, Sync Status, Profile & Logout */}
+          {/* Right: Sync Status, Profile & Logout */}
           <div className="flex items-center gap-2 sm:gap-3">
-            {/* Business Unit Selector */}
-            {/* {filterOptions?.business_units && filterOptions.business_units.length > 1 && (
-              <div className="hidden md:block min-w-[200px]">
-                <SearchableSelect
-                  value={filters.business_unit_id}
-                  onChange={(val) => setBusinessUnitId(val)}
-                  options={filterOptions.business_units.map((bu) => ({
-                    value: bu.id,
-                    label: bu.name,
-                    subLabel: `Kode: ${bu.code}`,
-                    badge: `BU #${bu.id}`,
-                  }))}
-                  allOptionLabel="Semua Unit Bisnis"
-                  placeholder="Pilih Unit Bisnis..."
-                  icon={<Building2 className="w-3.5 h-3.5" />}
-                />
-              </div>
-            )} */}
-
-            {/* Export CSV / Excel Button */}
-            {/* <button
-              type="button"
-              onClick={handleExportCsv}
-              disabled={!overview || isLoading}
-              title="Unduh Laporan Format Excel/CSV"
-              className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 bg-slate-900 hover:bg-emerald-950/40 border border-slate-800 hover:border-emerald-500/40 text-slate-300 hover:text-emerald-300 rounded-lg text-xs font-medium transition-all cursor-pointer disabled:opacity-40"
-            >
-              <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-400" />
-              <span className="hidden md:inline">Excel/CSV</span>
-            </button> */}
-
-            {/* Print / PDF Button */}
-            {/* <button
-              type="button"
-              onClick={handlePrintPdf}
-              title="Cetak atau Simpan PDF Laporan Resmi"
-              className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 bg-slate-900 hover:bg-indigo-950/40 border border-slate-800 hover:border-indigo-500/40 text-slate-300 hover:text-indigo-300 rounded-lg text-xs font-medium transition-all cursor-pointer"
-            >
-              <Printer className="w-3.5 h-3.5 text-indigo-400" />
-              <span className="hidden md:inline">Cetak PDF</span>
-            </button> */}
-
             {/* Auto-Refresh Toggle Pill */}
             <button
               onClick={() => setIsAutoRefresh(!isAutoRefresh)}
@@ -166,4 +104,3 @@ export const Header: React.FC<HeaderProps> = ({ filterOptions, isLoading, overvi
     </header>
   );
 };
-
