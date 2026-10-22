@@ -185,7 +185,15 @@ export interface AiChatResponse {
 
 // ─── NEW EXECUTIVE MODULE TYPES ──────────────────────────────────
 
-export type ExecutiveTab = 'overview' | 'financial_accurate' | 'staff' | 'brands' | 'audit' | 'promos' | 'projects';
+export type ExecutiveTab =
+  | 'overview'
+  | 'financial_accurate'
+  | 'inventory_valuation'
+  | 'staff'
+  | 'brands'
+  | 'audit'
+  | 'promos'
+  | 'projects';
 
 export interface SalesPersonKpi {
   rank: number;
@@ -649,5 +657,75 @@ export interface FinancialArApSummary {
     top_vendors: FinancialVendor[];
   };
   net_working_capital: number;
+  last_synced_at: string;
+}
+
+// ─── INVENTORY & STOCK VALUATION TYPES ───────────────────────────
+
+export interface InventoryGlAccount {
+  account_no: string;
+  account_name: string;
+  balance: number;
+}
+
+export interface InventoryBranchValuation {
+  warehouse_name: string;
+  branch_name: string;
+  type: string;
+  total_valuation: number;
+  total_qty: number;
+  average_unit_cost: number;
+  percentage: number;
+  status: 'OPTIMAL' | 'NORMAL' | 'ALERT';
+}
+
+export interface InventoryCategoryValuation {
+  category_name: string;
+  total_valuation: number;
+  total_qty: number;
+  average_unit_cost: number;
+  percentage: number;
+  color: string;
+}
+
+export interface InventoryBrandValuation {
+  brand_name: string;
+  total_valuation: number;
+  total_qty: number;
+  percentage: number;
+}
+
+export interface InventorySlowMovingRisk {
+  threshold_days: number;
+  total_valuation: number;
+  total_qty: number;
+  percentage_of_inventory: number;
+}
+
+export interface InventoryTopValuationItem {
+  sku: string;
+  name: string;
+  category: string;
+  brand: string;
+  stock_qty: number;
+  unit_cost: number;
+  total_valuation: number;
+  days_in_inventory: number;
+  risk_status: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+}
+
+export interface InventoryValuationData {
+  business_unit: string;
+  database_source: string;
+  as_of_date: string;
+  gl_account: InventoryGlAccount | null;
+  total_valuation: number;
+  total_units: number;
+  average_unit_cost: number;
+  slow_moving: InventorySlowMovingRisk;
+  branch_breakdown: InventoryBranchValuation[];
+  category_breakdown: InventoryCategoryValuation[];
+  brand_breakdown: InventoryBrandValuation[];
+  top_valuation_items: InventoryTopValuationItem[];
   last_synced_at: string;
 }

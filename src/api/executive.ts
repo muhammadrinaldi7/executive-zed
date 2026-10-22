@@ -24,6 +24,7 @@ import type {
   FinancialReceivablesReport,
   FinancialPayablesReport,
   CashBankReport,
+  InventoryValuationData,
 } from '../types';
 
 export const executiveApi = {
@@ -319,6 +320,34 @@ export const executiveApi = {
     const response = await apiClient.post<
       ApiResponse<{ summary: FinancialArApSummary; cash_bank: CashBankReport; synced_at: string }>
     >('/financial/sync', params);
+    return response.data;
+  },
+
+  /**
+   * Get Complete Inventory Stock & Valuation from Accurate.
+   */
+  async getInventoryValuation(params?: {
+    database_source?: string;
+    as_of_date?: string;
+    business_unit_id?: number | string | null;
+    branch?: string | string[] | null;
+    category?: string | string[] | null;
+    force_refresh?: boolean;
+  }) {
+    const response = await apiClient.get<ApiResponse<InventoryValuationData>>(
+      '/inventory/valuation',
+      { params }
+    );
+    return response.data;
+  },
+
+  /**
+   * Force Sync Inventory Valuation from Accurate.
+   */
+  async syncInventory(params?: { database_source?: string; as_of_date?: string; business_unit_id?: number | string | null }) {
+    const response = await apiClient.post<
+      ApiResponse<InventoryValuationData>
+    >('/inventory/sync', params);
     return response.data;
   },
 };

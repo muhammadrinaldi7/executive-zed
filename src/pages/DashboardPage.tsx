@@ -7,6 +7,7 @@ import { NavigationTabs } from '../components/NavigationTabs';
 import { FilterBar } from '../components/FilterBar';
 import { FinancialOverviewTab } from '../components/tabs/FinancialOverviewTab';
 import { AccurateFinancialTab } from '../components/tabs/AccurateFinancialTab';
+import { InventoryValuationTab } from '../components/tabs/InventoryValuationTab';
 import { StaffKpiTab } from '../components/tabs/StaffKpiTab';
 import { BrandAnalyticsTab } from '../components/tabs/BrandAnalyticsTab';
 import { CashierAuditTab } from '../components/tabs/CashierAuditTab';
@@ -121,6 +122,8 @@ export const DashboardPage: React.FC = () => {
         )}
 
         {activeTab === 'financial_accurate' && <AccurateFinancialTab />}
+
+        {activeTab === 'inventory_valuation' && <InventoryValuationTab />}
 
         {activeTab === 'staff' && <StaffKpiTab />}
 
