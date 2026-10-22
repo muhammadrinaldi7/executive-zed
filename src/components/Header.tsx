@@ -65,7 +65,7 @@ export const Header: React.FC<HeaderProps> = ({ filterOptions, isLoading, overvi
           {/* Right: BU Selector, Export Actions, Sync Status, Profile & Logout */}
           <div className="flex items-center gap-2 sm:gap-3">
             {/* Business Unit Selector */}
-            {filterOptions?.business_units && filterOptions.business_units.length > 1 && (
+            {/* {filterOptions?.business_units && filterOptions.business_units.length > 1 && (
               <div className="hidden md:block min-w-[200px]">
                 <SearchableSelect
                   value={filters.business_unit_id}
@@ -81,10 +81,10 @@ export const Header: React.FC<HeaderProps> = ({ filterOptions, isLoading, overvi
                   icon={<Building2 className="w-3.5 h-3.5" />}
                 />
               </div>
-            )}
+            )} */}
 
             {/* Export CSV / Excel Button */}
-            <button
+            {/* <button
               type="button"
               onClick={handleExportCsv}
               disabled={!overview || isLoading}
@@ -93,10 +93,10 @@ export const Header: React.FC<HeaderProps> = ({ filterOptions, isLoading, overvi
             >
               <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-400" />
               <span className="hidden md:inline">Excel/CSV</span>
-            </button>
+            </button> */}
 
             {/* Print / PDF Button */}
-            <button
+            {/* <button
               type="button"
               onClick={handlePrintPdf}
               title="Cetak atau Simpan PDF Laporan Resmi"
@@ -104,7 +104,7 @@ export const Header: React.FC<HeaderProps> = ({ filterOptions, isLoading, overvi
             >
               <Printer className="w-3.5 h-3.5 text-indigo-400" />
               <span className="hidden md:inline">Cetak PDF</span>
-            </button>
+            </button> */}
 
             {/* Auto-Refresh Toggle Pill */}
             <button

@@ -33,12 +33,12 @@ export const FinancialOverviewTab: React.FC<FinancialOverviewTabProps> = ({
       </div>
 
       {/* Row 2: Cash Flow Health & Receivables Risk Deep-Dive */}
-      <div className="break-inside-avoid">
+      {/* <div className="break-inside-avoid">
         <CashFlowHealthCard
           summary={overview?.kpi?.summary}
           isLoading={isLoading}
         />
-      </div>
+      </div> */}
 
       {/* Row 3: Sales & Profit Trend Area Chart */}
       <div className="break-inside-avoid">
