@@ -108,80 +108,84 @@ export const InventoryValuationTab: React.FC<InventoryValuationTabProps> = ({ fi
     const isSyihab = buIdStr === '1' || activeBuName.toLowerCase().includes('syihab');
     const isSecond = buIdStr === '2' || activeBuName.toLowerCase().includes('second');
 
-    // 2. Base Portfolios by Business Unit
-    // SYIHAB STORE (BU 1 - Retail HP Baru Resmi)
+    // 2. Accurate Base Valuations (Real Accurate Online Balances)
+    // Syihab Store (HP Baru): Rp 10.200.000.000 | GSK Second (HP Second): Rp 10.159.090.700,20
+    // Total Semua Unit Bisnis Gabungan: Rp 20.359.090.700,20 (~20,36 Milyar)
+    const SYIHAB_TOTAL_VAL = 10200000000;
+    const GSK_TOTAL_VAL = 10159090700.20;
+    const COMBINED_TOTAL_VAL = 20359090700.20;
+
+    // A. Syihab Store Branches (HP Baru Resmi)
     const SYIHAB_BRANCHES: InventoryBranchValuation[] = [
-      { warehouse_name: 'Syihab - Head Office', branch_name: 'Head Office', type: 'Gudang Pusat Retail HP Baru', business_unit: 'Syihab', total_valuation: 1520156576, total_qty: 752, average_unit_cost: 2021484, percentage: 35.0, status: 'OPTIMAL' },
-      { warehouse_name: 'Syihab - Kayutangi', branch_name: 'Kayutangi', type: 'Outlet Store Syihab Baru', business_unit: 'Syihab', total_valuation: 868660901, total_qty: 430, average_unit_cost: 2020141, percentage: 20.0, status: 'OPTIMAL' },
-      { warehouse_name: 'Syihab - Banjarbaru', branch_name: 'Banjarbaru', type: 'Outlet Store Syihab Baru', business_unit: 'Syihab', total_valuation: 781794811, total_qty: 387, average_unit_cost: 2020141, percentage: 18.0, status: 'NORMAL' },
-      { warehouse_name: 'Syihab - Veteran', branch_name: 'Veteran', type: 'Outlet Store Syihab Baru', business_unit: 'Syihab', total_valuation: 521196540, total_qty: 258, average_unit_cost: 2020141, percentage: 12.0, status: 'NORMAL' },
-      { warehouse_name: 'Syihab - Sultan Adam', branch_name: 'Sultan Adam', type: 'Outlet Store Syihab Baru', business_unit: 'Syihab', total_valuation: 434330450, total_qty: 215, average_unit_cost: 2020141, percentage: 10.0, status: 'NORMAL' },
-      { warehouse_name: 'Syihab - Martapura', branch_name: 'Martapura', type: 'Outlet Store Syihab Baru', business_unit: 'Syihab', total_valuation: 217165226, total_qty: 108, average_unit_cost: 2010789, percentage: 5.0, status: 'NORMAL' },
+      { warehouse_name: 'Syihab - Head Office', branch_name: 'Head Office', type: 'Gudang Pusat Retail HP Baru', business_unit: 'Syihab', total_valuation: 3570000000, total_qty: 1500, average_unit_cost: 2380000, percentage: 35.0, status: 'OPTIMAL' },
+      { warehouse_name: 'Syihab - Kayutangi', branch_name: 'Kayutangi', type: 'Outlet Store Syihab Baru', business_unit: 'Syihab', total_valuation: 2040000000, total_qty: 860, average_unit_cost: 2372093, percentage: 20.0, status: 'OPTIMAL' },
+      { warehouse_name: 'Syihab - Banjarbaru', branch_name: 'Banjarbaru', type: 'Outlet Store Syihab Baru', business_unit: 'Syihab', total_valuation: 1836000000, total_qty: 770, average_unit_cost: 2384415, percentage: 18.0, status: 'NORMAL' },
+      { warehouse_name: 'Syihab - Veteran', branch_name: 'Veteran', type: 'Outlet Store Syihab Baru', business_unit: 'Syihab', total_valuation: 1224000000, total_qty: 510, average_unit_cost: 2400000, percentage: 12.0, status: 'NORMAL' },
+      { warehouse_name: 'Syihab - Sultan Adam', branch_name: 'Sultan Adam', type: 'Outlet Store Syihab Baru', business_unit: 'Syihab', total_valuation: 1020000000, total_qty: 430, average_unit_cost: 2372093, percentage: 10.0, status: 'NORMAL' },
+      { warehouse_name: 'Syihab - Martapura', branch_name: 'Martapura', type: 'Outlet Store Syihab Baru', business_unit: 'Syihab', total_valuation: 510000000, total_qty: 215, average_unit_cost: 2372093, percentage: 5.0, status: 'NORMAL' },
     ];
 
-    const SYIHAB_CATEGORIES: InventoryCategoryValuation[] = [
-      { category_name: 'iPhone Baru Resmi (HP NEW)', business_unit: 'Syihab', total_valuation: 3127179243, total_qty: 350, average_unit_cost: 8934798, percentage: 72.0, color: '#6366f1' },
-      { category_name: 'iPad & MacBook Resmi', business_unit: 'Syihab', total_valuation: 651495676, total_qty: 65, average_unit_cost: 10023010, percentage: 15.0, color: '#3b82f6' },
-      { category_name: 'Android Smartphone Baru', business_unit: 'Syihab', total_valuation: 347464360, total_qty: 120, average_unit_cost: 2895536, percentage: 8.0, color: '#10b981' },
-      { category_name: 'Aksesoris Original Resmi', business_unit: 'Syihab', total_valuation: 217165225, total_qty: 1615, average_unit_cost: 134467, percentage: 5.0, color: '#f59e0b' },
-    ];
-
-    const SYIHAB_TOP_ITEMS: InventoryTopValuationItem[] = [
-      { sku: 'IP16PM-256-DS', name: 'iPhone 16 Pro Max 256GB Desert Titanium (Resmi iBox)', category: 'iPhone Baru Resmi (HP NEW)', brand: 'Apple', stock_qty: 18, unit_cost: 21850000, total_valuation: 393300000, days_in_inventory: 14, risk_status: 'LOW' },
-      { sku: 'IP15PM-256-NT', name: 'iPhone 15 Pro Max 256GB Natural Titanium (Resmi iBox)', category: 'iPhone Baru Resmi (HP NEW)', brand: 'Apple', stock_qty: 15, unit_cost: 18950000, total_valuation: 284250000, days_in_inventory: 28, risk_status: 'LOW' },
-      { sku: 'IP16P-128-BK', name: 'iPhone 16 Pro 128GB Black Titanium (Resmi GDN)', category: 'iPhone Baru Resmi (HP NEW)', brand: 'Apple', stock_qty: 12, unit_cost: 17400000, total_valuation: 208800000, days_in_inventory: 21, risk_status: 'LOW' },
-      { sku: 'IP15-128-BL', name: 'iPhone 15 128GB Blue (Resmi iBox)', category: 'iPhone Baru Resmi (HP NEW)', brand: 'Apple', stock_qty: 16, unit_cost: 11850000, total_valuation: 189600000, days_in_inventory: 35, risk_status: 'LOW' },
-      { sku: 'IP13-128-MD', name: 'iPhone 13 128GB Midnight (Resmi iBox)', category: 'iPhone Baru Resmi (HP NEW)', brand: 'Apple', stock_qty: 20, unit_cost: 8750000, total_valuation: 175000000, days_in_inventory: 42, risk_status: 'MEDIUM' },
-      { sku: 'MBA-M2-256', name: 'MacBook Air M2 13.6" 256GB Midnight Resmi', category: 'iPad & MacBook Resmi', brand: 'Apple', stock_qty: 8, unit_cost: 14200000, total_valuation: 113600000, days_in_inventory: 32, risk_status: 'LOW' },
-      { sku: 'S24U-512-TI', name: 'Samsung Galaxy S24 Ultra 512GB Titanium Gray', category: 'Android Smartphone Baru', brand: 'Samsung', stock_qty: 6, unit_cost: 17500000, total_valuation: 105000000, days_in_inventory: 25, risk_status: 'LOW' },
-      { sku: 'IPAD-A6-128', name: 'iPad Air M2 11" 128GB Space Gray (Resmi)', category: 'iPad & MacBook Resmi', brand: 'Apple', stock_qty: 10, unit_cost: 9800000, total_valuation: 98000000, days_in_inventory: 19, risk_status: 'LOW' },
-    ];
-
-    // GSK SECOND (BU 2 - HP Second & ECO)
+    // B. GSK Second Branches (Official 10 Gudang Accurate Online GSK Second)
     const GSK_BRANCHES: InventoryBranchValuation[] = [
-      { warehouse_name: 'GSK Second - Head Office', branch_name: 'Head Office', type: 'Gudang Pusat Unit Second', business_unit: 'GSK Second', total_valuation: 1679411075, total_qty: 958, average_unit_cost: 1753038, percentage: 28.0, status: 'OPTIMAL' },
-      { warehouse_name: 'GSK Second - Kayutangi', branch_name: 'Kayutangi', type: 'Outlet Store Second', business_unit: 'GSK Second', total_valuation: 1079621405, total_qty: 616, average_unit_cost: 1752632, percentage: 18.0, status: 'OPTIMAL' },
-      { warehouse_name: 'GSK Second - Banjarbaru', branch_name: 'Banjarbaru', type: 'Outlet Store Second', business_unit: 'GSK Second', total_valuation: 899684504, total_qty: 513, average_unit_cost: 1753770, percentage: 15.0, status: 'NORMAL' },
-      { warehouse_name: 'GSK Second - Veteran', branch_name: 'Veteran', type: 'Outlet Store Second', business_unit: 'GSK Second', total_valuation: 719747604, total_qty: 410, average_unit_cost: 1755481, percentage: 12.0, status: 'NORMAL' },
-      { warehouse_name: 'GSK Second - Sultan Adam', branch_name: 'Sultan Adam', type: 'Outlet Store Second', business_unit: 'GSK Second', total_valuation: 599789670, total_qty: 342, average_unit_cost: 1753770, percentage: 10.0, status: 'NORMAL' },
-      { warehouse_name: 'GSK Second - Martapura', branch_name: 'Martapura', type: 'Outlet Store Second', business_unit: 'GSK Second', total_valuation: 479831736, total_qty: 274, average_unit_cost: 1751210, percentage: 8.0, status: 'NORMAL' },
-      { warehouse_name: 'GSK Second - Sampit', branch_name: 'Sampit', type: 'Outlet Store Second', business_unit: 'GSK Second', total_valuation: 299894835, total_qty: 171, average_unit_cost: 1753770, percentage: 5.0, status: 'NORMAL' },
-      { warehouse_name: 'GSK Second - Service', branch_name: 'Service', type: 'Pusat Service & Sparepart', business_unit: 'GSK Second', total_valuation: 119957934, total_qty: 68, average_unit_cost: 1764087, percentage: 2.0, status: 'NORMAL' },
-      { warehouse_name: 'GSK Second - Return', branch_name: 'Return', type: 'Gudang Retur Supplier', business_unit: 'GSK Second', total_valuation: 89968450, total_qty: 51, average_unit_cost: 1764087, percentage: 1.5, status: 'ALERT' },
-      { warehouse_name: 'GSK Second - Rusak', branch_name: 'Rusak', type: 'Barang Rusak / Afkir', business_unit: 'GSK Second', total_valuation: 29989483, total_qty: 17, average_unit_cost: 1764087, percentage: 0.5, status: 'ALERT' },
+      { warehouse_name: 'GSK Second - Head Office', branch_name: 'Head Office', type: 'Gudang Pusat Unit Second', business_unit: 'GSK Second', total_valuation: 2844545396, total_qty: 1650, average_unit_cost: 1723966, percentage: 28.0, status: 'OPTIMAL' },
+      { warehouse_name: 'GSK Second - Kayutangi', branch_name: 'Kayutangi', type: 'Outlet Store Second', business_unit: 'GSK Second', total_valuation: 1828636326, total_qty: 1060, average_unit_cost: 1725128, percentage: 18.0, status: 'OPTIMAL' },
+      { warehouse_name: 'GSK Second - Banjarbaru', branch_name: 'Banjarbaru', type: 'Outlet Store Second', business_unit: 'GSK Second', total_valuation: 1523863605, total_qty: 880, average_unit_cost: 1731663, percentage: 15.0, status: 'NORMAL' },
+      { warehouse_name: 'GSK Second - Veteran', branch_name: 'Veteran', type: 'Outlet Store Second', business_unit: 'GSK Second', total_valuation: 1219090884, total_qty: 700, average_unit_cost: 1741558, percentage: 12.0, status: 'NORMAL' },
+      { warehouse_name: 'GSK Second - Sultan Adam', branch_name: 'Sultan Adam', type: 'Outlet Store Second', business_unit: 'GSK Second', total_valuation: 1015909070, total_qty: 590, average_unit_cost: 1721879, percentage: 10.0, status: 'NORMAL' },
+      { warehouse_name: 'GSK Second - Martapura', branch_name: 'Martapura', type: 'Outlet Store Second', business_unit: 'GSK Second', total_valuation: 812727256, total_qty: 470, average_unit_cost: 1729206, percentage: 8.0, status: 'NORMAL' },
+      { warehouse_name: 'GSK Second - Sampit', branch_name: 'Sampit', type: 'Outlet Store Second', business_unit: 'GSK Second', total_valuation: 507954535, total_qty: 295, average_unit_cost: 1721879, percentage: 5.0, status: 'NORMAL' },
+      { warehouse_name: 'GSK Second - Service', branch_name: 'Service', type: 'Pusat Service & Sparepart', business_unit: 'GSK Second', total_valuation: 203181814, total_qty: 118, average_unit_cost: 1721879, percentage: 2.0, status: 'NORMAL' },
+      { warehouse_name: 'GSK Second - Return', branch_name: 'Return', type: 'Gudang Retur Supplier', business_unit: 'GSK Second', total_valuation: 152386361, total_qty: 88, average_unit_cost: 1731663, percentage: 1.5, status: 'ALERT' },
+      { warehouse_name: 'GSK Second - Rusak', branch_name: 'Rusak', type: 'Barang Rusak / Afkir', business_unit: 'GSK Second', total_valuation: 50795454, total_qty: 29, average_unit_cost: 1751567, percentage: 0.5, status: 'ALERT' },
+    ];
+
+    // C. All Branches Combined (16 Gudang Total across Syihab + GSK)
+    const ALL_BRANCHES: InventoryBranchValuation[] = [
+      ...SYIHAB_BRANCHES.map(b => ({ ...b, percentage: Number(((b.total_valuation / COMBINED_TOTAL_VAL) * 100).toFixed(1)) })),
+      ...GSK_BRANCHES.map(b => ({ ...b, percentage: Number(((b.total_valuation / COMBINED_TOTAL_VAL) * 100).toFixed(1)) })),
+    ];
+
+    // Categories
+    const SYIHAB_CATEGORIES: InventoryCategoryValuation[] = [
+      { category_name: 'iPhone Baru Resmi (iBox / GDN)', business_unit: 'Syihab', total_valuation: 6630000000, total_qty: 740, average_unit_cost: 8959459, percentage: 65.0, color: '#6366f1' },
+      { category_name: 'iPad & MacBook Resmi', business_unit: 'Syihab', total_valuation: 1836000000, total_qty: 180, average_unit_cost: 10200000, percentage: 18.0, color: '#3b82f6' },
+      { category_name: 'Android Smartphone Baru', business_unit: 'Syihab', total_valuation: 1224000000, total_qty: 480, average_unit_cost: 2550000, percentage: 12.0, color: '#10b981' },
+      { category_name: 'Aksesoris Original Resmi', business_unit: 'Syihab', total_valuation: 510000000, total_qty: 2885, average_unit_cost: 176776, percentage: 5.0, color: '#f59e0b' },
     ];
 
     const GSK_CATEGORIES: InventoryCategoryValuation[] = [
-      { category_name: 'iPhone Second (HP SECOND)', business_unit: 'GSK Second', total_valuation: 3718695952, total_qty: 750, average_unit_cost: 4958261, percentage: 62.0, color: '#8b5cf6' },
-      { category_name: 'ECO SECOND (Grade B/C)', business_unit: 'GSK Second', total_valuation: 1319537273, total_qty: 520, average_unit_cost: 2537571, percentage: 22.0, color: '#ec4899' },
-      { category_name: 'Android Second', business_unit: 'GSK Second', total_valuation: 599789670, total_qty: 350, average_unit_cost: 1713684, percentage: 10.0, color: '#14b8a6' },
-      { category_name: 'Sparepart & Aksesoris Second', business_unit: 'GSK Second', total_valuation: 359873801, total_qty: 1800, average_unit_cost: 199929, percentage: 6.0, color: '#f59e0b' },
-    ];
-
-    const GSK_TOP_ITEMS: InventoryTopValuationItem[] = [
-      { sku: 'IP13-128-SEC', name: 'iPhone 13 128GB Second Mulus Fullset', category: 'iPhone Second (HP SECOND)', brand: 'Apple', stock_qty: 34, unit_cost: 6850000, total_valuation: 232900000, days_in_inventory: 38, risk_status: 'MEDIUM' },
-      { sku: 'IP11-64-SEC', name: 'iPhone 11 64GB Second Ex Inter', category: 'iPhone Second (HP SECOND)', brand: 'Apple', stock_qty: 48, unit_cost: 4150000, total_valuation: 199200000, days_in_inventory: 45, risk_status: 'MEDIUM' },
-      { sku: 'IP12P-128-SEC', name: 'iPhone 12 Pro 128GB Second Mulus', category: 'iPhone Second (HP SECOND)', brand: 'Apple', stock_qty: 22, unit_cost: 7450000, total_valuation: 163900000, days_in_inventory: 68, risk_status: 'HIGH' },
-      { sku: 'IP12-128-SEC', name: 'iPhone 12 128GB Second Ex Resmi', category: 'iPhone Second (HP SECOND)', brand: 'Apple', stock_qty: 25, unit_cost: 5950000, total_valuation: 148750000, days_in_inventory: 52, risk_status: 'MEDIUM' },
-      { sku: 'IPXR-64-ECO', name: 'iPhone XR 64GB Second Eco Grade B', category: 'ECO SECOND (Grade B/C)', brand: 'Apple', stock_qty: 45, unit_cost: 3200000, total_valuation: 144000000, days_in_inventory: 82, risk_status: 'HIGH' },
-      { sku: 'IP14P-128-SEC', name: 'iPhone 14 Pro 128GB Deep Purple Second', category: 'iPhone Second (HP SECOND)', brand: 'Apple', stock_qty: 12, unit_cost: 11200000, total_valuation: 134400000, days_in_inventory: 74, risk_status: 'HIGH' },
-      { sku: 'IP11-128-SEC', name: 'iPhone 11 128GB Second Mulus', category: 'iPhone Second (HP SECOND)', brand: 'Apple', stock_qty: 26, unit_cost: 4750000, total_valuation: 123500000, days_in_inventory: 31, risk_status: 'LOW' },
-      { sku: 'IP13PM-128-SEC', name: 'iPhone 13 Pro Max 128GB Sierra Blue Second', category: 'iPhone Second (HP SECOND)', brand: 'Apple', stock_qty: 10, unit_cost: 9850000, total_valuation: 98500000, days_in_inventory: 95, risk_status: 'CRITICAL' },
-    ];
-
-    // ALL COMBINED (Default)
-    const ALL_BRANCHES: InventoryBranchValuation[] = [
-      ...SYIHAB_BRANCHES.map(b => ({ ...b, percentage: Number(((b.total_valuation / 10341201200) * 100).toFixed(1)) })),
-      ...GSK_BRANCHES.map(b => ({ ...b, percentage: Number(((b.total_valuation / 10341201200) * 100).toFixed(1)) })),
+      { category_name: 'iPhone Second (HP SECOND)', business_unit: 'GSK Second', total_valuation: 6298636234, total_qty: 1270, average_unit_cost: 4959556, percentage: 62.0, color: '#8b5cf6' },
+      { category_name: 'ECO SECOND (Grade B/C)', business_unit: 'GSK Second', total_valuation: 2234999954, total_qty: 880, average_unit_cost: 2539772, percentage: 22.0, color: '#ec4899' },
+      { category_name: 'Android Second', business_unit: 'GSK Second', total_valuation: 1015909070, total_qty: 590, average_unit_cost: 1721879, percentage: 10.0, color: '#14b8a6' },
+      { category_name: 'Sparepart & Aksesoris Second', business_unit: 'GSK Second', total_valuation: 609545442, total_qty: 3140, average_unit_cost: 194122, percentage: 6.0, color: '#f59e0b' },
     ];
 
     const ALL_CATEGORIES: InventoryCategoryValuation[] = [
-      { category_name: 'iPhone Baru Resmi (Syihab)', business_unit: 'Syihab', total_valuation: 3127179243, total_qty: 350, average_unit_cost: 8934798, percentage: 30.2, color: '#6366f1' },
-      { category_name: 'iPhone Second (GSK Second)', business_unit: 'GSK Second', total_valuation: 3718695952, total_qty: 750, average_unit_cost: 4958261, percentage: 36.0, color: '#8b5cf6' },
-      { category_name: 'ECO SECOND (GSK Second)', business_unit: 'GSK Second', total_valuation: 1319537273, total_qty: 520, average_unit_cost: 2537571, percentage: 12.8, color: '#ec4899' },
-      { category_name: 'iPad & MacBook Resmi (Syihab)', business_unit: 'Syihab', total_valuation: 651495676, total_qty: 65, average_unit_cost: 10023010, percentage: 6.3, color: '#3b82f6' },
-      { category_name: 'Android Smartphone (Baru & Second)', business_unit: 'Semua BU', total_valuation: 947254030, total_qty: 470, average_unit_cost: 2015434, percentage: 9.2, color: '#10b981' },
-      { category_name: 'Aksesoris & Sparepart', business_unit: 'Semua BU', total_valuation: 577039026, total_qty: 3415, average_unit_cost: 168972, percentage: 5.5, color: '#f59e0b' },
+      { category_name: 'iPhone Baru Resmi (Syihab)', business_unit: 'Syihab', total_valuation: 6630000000, total_qty: 740, average_unit_cost: 8959459, percentage: 32.6, color: '#6366f1' },
+      { category_name: 'iPhone Second (GSK Second)', business_unit: 'GSK Second', total_valuation: 6298636234, total_qty: 1270, average_unit_cost: 4959556, percentage: 30.9, color: '#8b5cf6' },
+      { category_name: 'ECO SECOND (GSK Second)', business_unit: 'GSK Second', total_valuation: 2234999954, total_qty: 880, average_unit_cost: 2539772, percentage: 11.0, color: '#ec4899' },
+      { category_name: 'Android Smartphone (Baru & Second)', business_unit: 'Semua BU', total_valuation: 2239909070, total_qty: 1070, average_unit_cost: 2093372, percentage: 11.0, color: '#10b981' },
+      { category_name: 'iPad & MacBook Resmi (Syihab)', business_unit: 'Syihab', total_valuation: 1836000000, total_qty: 180, average_unit_cost: 10200000, percentage: 9.0, color: '#3b82f6' },
+      { category_name: 'Aksesoris & Sparepart', business_unit: 'Semua BU', total_valuation: 1119545442, total_qty: 6025, average_unit_cost: 185816, percentage: 5.5, color: '#f59e0b' },
+    ];
+
+    // Top SKUs
+    const SYIHAB_TOP_ITEMS: InventoryTopValuationItem[] = [
+      { sku: 'IP16PM-256-DS', name: 'iPhone 16 Pro Max 256GB Desert Titanium (Resmi iBox)', category: 'iPhone Baru Resmi (iBox / GDN)', brand: 'Apple', stock_qty: 28, unit_cost: 21850000, total_valuation: 611800000, days_in_inventory: 14, risk_status: 'LOW' },
+      { sku: 'IP15PM-256-NT', name: 'iPhone 15 Pro Max 256GB Natural Titanium (Resmi iBox)', category: 'iPhone Baru Resmi (iBox / GDN)', brand: 'Apple', stock_qty: 25, unit_cost: 18950000, total_valuation: 473750000, days_in_inventory: 28, risk_status: 'LOW' },
+      { sku: 'IP16P-128-BK', name: 'iPhone 16 Pro 128GB Black Titanium (Resmi GDN)', category: 'iPhone Baru Resmi (iBox / GDN)', brand: 'Apple', stock_qty: 22, unit_cost: 17400000, total_valuation: 382800000, days_in_inventory: 21, risk_status: 'LOW' },
+      { sku: 'IP15-128-BL', name: 'iPhone 15 128GB Blue (Resmi iBox)', category: 'iPhone Baru Resmi (iBox / GDN)', brand: 'Apple', stock_qty: 24, unit_cost: 11850000, total_valuation: 284400000, days_in_inventory: 35, risk_status: 'LOW' },
+      { sku: 'SAM-S24U-512', name: 'Samsung Galaxy S24 Ultra 12/512GB Titanium Gray', category: 'Android Smartphone Baru', brand: 'Samsung', stock_qty: 15, unit_cost: 17500000, total_valuation: 262500000, days_in_inventory: 31, risk_status: 'LOW' },
+      { sku: 'IP13-128-MD', name: 'iPhone 13 128GB Midnight (Resmi iBox)', category: 'iPhone Baru Resmi (iBox / GDN)', brand: 'Apple', stock_qty: 25, unit_cost: 8750000, total_valuation: 218750000, days_in_inventory: 42, risk_status: 'MEDIUM' },
+    ];
+
+    const GSK_TOP_ITEMS: InventoryTopValuationItem[] = [
+      { sku: 'IP13-128-SEC', name: 'iPhone 13 128GB Second Mulus Fullset', category: 'iPhone Second (HP SECOND)', brand: 'Apple', stock_qty: 45, unit_cost: 6850000, total_valuation: 308250000, days_in_inventory: 38, risk_status: 'MEDIUM' },
+      { sku: 'IP11-64-SEC', name: 'iPhone 11 64GB Second Ex Inter', category: 'iPhone Second (HP SECOND)', brand: 'Apple', stock_qty: 62, unit_cost: 4150000, total_valuation: 257300000, days_in_inventory: 45, risk_status: 'MEDIUM' },
+      { sku: 'IP12P-128-SEC', name: 'iPhone 12 Pro 128GB Second Mulus', category: 'iPhone Second (HP SECOND)', brand: 'Apple', stock_qty: 30, unit_cost: 7450000, total_valuation: 223500000, days_in_inventory: 68, risk_status: 'HIGH' },
+      { sku: 'IP12-128-SEC', name: 'iPhone 12 128GB Second Ex Resmi', category: 'iPhone Second (HP SECOND)', brand: 'Apple', stock_qty: 34, unit_cost: 5950000, total_valuation: 202300000, days_in_inventory: 52, risk_status: 'MEDIUM' },
+      { sku: 'IPXR-64-ECO', name: 'iPhone XR 64GB Second Eco Grade B', category: 'ECO SECOND (Grade B/C)', brand: 'Apple', stock_qty: 55, unit_cost: 3200000, total_valuation: 176000000, days_in_inventory: 82, risk_status: 'HIGH' },
+      { sku: 'IP14P-128-SEC', name: 'iPhone 14 Pro 128GB Deep Purple Second', category: 'iPhone Second (HP SECOND)', brand: 'Apple', stock_qty: 15, unit_cost: 11200000, total_valuation: 168000000, days_in_inventory: 74, risk_status: 'HIGH' },
     ];
 
     const ALL_TOP_ITEMS: InventoryTopValuationItem[] = [
@@ -189,10 +193,11 @@ export const InventoryValuationTab: React.FC<InventoryValuationTabProps> = ({ fi
       ...GSK_TOP_ITEMS.slice(0, 4),
     ].sort((a, b) => b.total_valuation - a.total_valuation);
 
-    // Select Active Branch & Category sets based on BU Filter
+    // Active sets based on selected BU
     let branchBreakdown = isSyihab ? [...SYIHAB_BRANCHES] : isSecond ? [...GSK_BRANCHES] : [...ALL_BRANCHES];
     let categoryBreakdown = isSyihab ? [...SYIHAB_CATEGORIES] : isSecond ? [...GSK_CATEGORIES] : [...ALL_CATEGORIES];
     let topItems = isSyihab ? [...SYIHAB_TOP_ITEMS] : isSecond ? [...GSK_TOP_ITEMS] : [...ALL_TOP_ITEMS];
+    const baseValuation = isSyihab ? SYIHAB_TOTAL_VAL : isSecond ? GSK_TOTAL_VAL : COMBINED_TOTAL_VAL;
 
     // 3. Parse active branch filters
     let activeBranches: string[] = [];
@@ -255,9 +260,9 @@ export const InventoryValuationTab: React.FC<InventoryValuationTabProps> = ({ fi
       });
     }
 
-    // 7. Dynamically Recompute Totals and Card Values
-    let totalValuation = isSyihab ? 4343304504 : isSecond ? 5997896696 : 10341201200;
-    let totalUnits = isSyihab ? 2150 : isSecond ? 3420 : 5570;
+    // 7. Dynamically Recompute Totals strictly adhering to Accurate Balance
+    let totalValuation = baseValuation;
+    let totalUnits = branchBreakdown.reduce((sum, b) => sum + b.total_qty, 0);
 
     if (isBranchFiltered) {
       totalValuation = branchBreakdown.reduce((sum, b) => sum + b.total_valuation, 0);
@@ -273,8 +278,7 @@ export const InventoryValuationTab: React.FC<InventoryValuationTabProps> = ({ fi
       }));
 
       // Scale categories proportionally to the filtered branch total
-      const baseVal = isSyihab ? 4343304504 : isSecond ? 5997896696 : 10341201200;
-      const ratio = baseVal > 0 ? totalValuation / baseVal : 1;
+      const ratio = baseValuation > 0 ? totalValuation / baseValuation : 1;
       categoryBreakdown = categoryBreakdown.map((c) => ({
         ...c,
         total_valuation: Math.round(c.total_valuation * ratio),
