@@ -4,9 +4,6 @@ import { executiveApi } from '../../api/executive';
 import type {
   InventoryValuationData,
   FilterOptions,
-  InventoryBranchValuation,
-  InventoryCategoryValuation,
-  InventoryTopValuationItem,
 } from '../../types';
 import { InventoryHeaderSyncBar } from '../inventory/InventoryHeaderSyncBar';
 import { InventoryKpiGrid } from '../inventory/InventoryKpiGrid';
@@ -99,107 +96,18 @@ export const InventoryValuationTab: React.FC<InventoryValuationTabProps> = ({ fi
   }, [filters.business_unit_id, filterOptions?.business_units, data?.business_unit]);
 
   // Reactive Client-Side Filter Computation (Dual-layer filter guarantee)
-  // Reactive Client-Side Filter Computation (Dual-layer filter guarantee with clear BU separation)
+  // Reactive Client-Side Filter Computation (Directly using live backend API data)
   const filteredData = useMemo<InventoryValuationData | null>(() => {
     if (!data) return null;
 
-    // 1. Identify active BU filter
-    const buIdStr = String(filters.business_unit_id || '');
-    const isSyihab = buIdStr === '1' || activeBuName.toLowerCase().includes('syihab');
-    const isSecond = buIdStr === '2' || activeBuName.toLowerCase().includes('second');
+    let branchBreakdown = [...(data.branch_breakdown || [])];
+    let categoryBreakdown = [...(data.category_breakdown || [])];
+    let brandBreakdown = [...(data.brand_breakdown || [])];
+    let topItems = [...(data.top_valuation_items || [])];
+    let totalValuation = data.total_valuation || 0;
+    let totalUnits = data.total_units || 0;
 
-    // 2. Official Accurate Online General Ledger Ending Balances:
-    // Syihab Store: Rp 20.888.814.076,46 | GSK Second: Rp 10.159.027.700,20
-    // Total Semua Persediaan Gabungan: Rp 31.047.841.776,66
-    const SYIHAB_TOTAL_VAL = 20888814076.46;
-    const GSK_TOTAL_VAL = 10159027700.20;
-    const COMBINED_TOTAL_VAL = 31047841776.66;
-
-    // A. Syihab Store Branches (HP Baru Resmi) - Total = Rp 20.888.814.076,46
-    const SYIHAB_BRANCHES: InventoryBranchValuation[] = [
-      { warehouse_name: 'Syihab - Head Office', branch_name: 'Head Office', type: 'Gudang Pusat Retail HP Baru', business_unit: 'Syihab', total_valuation: 7311084927, total_qty: 1500, average_unit_cost: 4874057, percentage: 35.0, status: 'OPTIMAL' },
-      { warehouse_name: 'Syihab - Kayutangi', branch_name: 'Kayutangi', type: 'Outlet Store Syihab Baru', business_unit: 'Syihab', total_valuation: 4177762815, total_qty: 860, average_unit_cost: 4857864, percentage: 20.0, status: 'OPTIMAL' },
-      { warehouse_name: 'Syihab - Banjarbaru', branch_name: 'Banjarbaru', type: 'Outlet Store Syihab Baru', business_unit: 'Syihab', total_valuation: 3759986534, total_qty: 770, average_unit_cost: 4883100, percentage: 18.0, status: 'NORMAL' },
-      { warehouse_name: 'Syihab - Veteran', branch_name: 'Veteran', type: 'Outlet Store Syihab Baru', business_unit: 'Syihab', total_valuation: 2506657689, total_qty: 510, average_unit_cost: 4915015, percentage: 12.0, status: 'NORMAL' },
-      { warehouse_name: 'Syihab - Sultan Adam', branch_name: 'Sultan Adam', type: 'Outlet Store Syihab Baru', business_unit: 'Syihab', total_valuation: 2088881408, total_qty: 430, average_unit_cost: 4857864, percentage: 10.0, status: 'NORMAL' },
-      { warehouse_name: 'Syihab - Martapura', branch_name: 'Martapura', type: 'Outlet Store Syihab Baru', business_unit: 'Syihab', total_valuation: 1044440704, total_qty: 215, average_unit_cost: 4857864, percentage: 5.0, status: 'NORMAL' },
-    ];
-
-    // B. GSK Second Branches (Official 10 Gudang Accurate GSK Second) - Total = Rp 10.159.027.700,20
-    const GSK_BRANCHES: InventoryBranchValuation[] = [
-      { warehouse_name: 'GSK Second - Head Office', branch_name: 'Head Office', type: 'Gudang Pusat Unit Second', business_unit: 'GSK Second', total_valuation: 2844527756, total_qty: 1650, average_unit_cost: 1723956, percentage: 28.0, status: 'OPTIMAL' },
-      { warehouse_name: 'GSK Second - Kayutangi', branch_name: 'Kayutangi', type: 'Outlet Store Second', business_unit: 'GSK Second', total_valuation: 1828624986, total_qty: 1060, average_unit_cost: 1725118, percentage: 18.0, status: 'OPTIMAL' },
-      { warehouse_name: 'GSK Second - Banjarbaru', branch_name: 'Banjarbaru', type: 'Outlet Store Second', business_unit: 'GSK Second', total_valuation: 1523854155, total_qty: 880, average_unit_cost: 1731652, percentage: 15.0, status: 'NORMAL' },
-      { warehouse_name: 'GSK Second - Veteran', branch_name: 'Veteran', type: 'Outlet Store Second', business_unit: 'GSK Second', total_valuation: 1219083324, total_qty: 700, average_unit_cost: 1741548, percentage: 12.0, status: 'NORMAL' },
-      { warehouse_name: 'GSK Second - Sultan Adam', branch_name: 'Sultan Adam', type: 'Outlet Store Second', business_unit: 'GSK Second', total_valuation: 1015902770, total_qty: 590, average_unit_cost: 1721869, percentage: 10.0, status: 'NORMAL' },
-      { warehouse_name: 'GSK Second - Martapura', branch_name: 'Martapura', type: 'Outlet Store Second', business_unit: 'GSK Second', total_valuation: 812722216, total_qty: 470, average_unit_cost: 1729196, percentage: 8.0, status: 'NORMAL' },
-      { warehouse_name: 'GSK Second - Sampit', branch_name: 'Sampit', type: 'Outlet Store Second', business_unit: 'GSK Second', total_valuation: 507951385, total_qty: 295, average_unit_cost: 1721869, percentage: 5.0, status: 'NORMAL' },
-      { warehouse_name: 'GSK Second - Service', branch_name: 'Service', type: 'Pusat Service & Sparepart', business_unit: 'GSK Second', total_valuation: 203180554, total_qty: 118, average_unit_cost: 1721869, percentage: 2.0, status: 'NORMAL' },
-      { warehouse_name: 'GSK Second - Return', branch_name: 'Return', type: 'Gudang Retur Supplier', business_unit: 'GSK Second', total_valuation: 152385416, total_qty: 88, average_unit_cost: 1731652, percentage: 1.5, status: 'ALERT' },
-      { warehouse_name: 'GSK Second - Rusak', branch_name: 'Rusak', type: 'Barang Rusak / Afkir', business_unit: 'GSK Second', total_valuation: 50795139, total_qty: 29, average_unit_cost: 1751557, percentage: 0.5, status: 'ALERT' },
-    ];
-
-    // C. All Branches Combined (16 Gudang Total across Syihab + GSK)
-    const ALL_BRANCHES: InventoryBranchValuation[] = [
-      ...SYIHAB_BRANCHES.map(b => ({ ...b, percentage: Number(((b.total_valuation / COMBINED_TOTAL_VAL) * 100).toFixed(1)) })),
-      ...GSK_BRANCHES.map(b => ({ ...b, percentage: Number(((b.total_valuation / COMBINED_TOTAL_VAL) * 100).toFixed(1)) })),
-    ];
-
-    // Categories
-    const SYIHAB_CATEGORIES: InventoryCategoryValuation[] = [
-      { category_name: 'iPhone Baru Resmi (iBox / GDN)', business_unit: 'Syihab', total_valuation: 13577729150, total_qty: 1520, average_unit_cost: 8932717, percentage: 65.0, color: '#6366f1' },
-      { category_name: 'iPad & MacBook Resmi', business_unit: 'Syihab', total_valuation: 3759986534, total_qty: 360, average_unit_cost: 10444407, percentage: 18.0, color: '#3b82f6' },
-      { category_name: 'Android Smartphone Baru', business_unit: 'Syihab', total_valuation: 2506657689, total_qty: 980, average_unit_cost: 2557814, percentage: 12.0, color: '#10b981' },
-      { category_name: 'Aksesoris Original Resmi', business_unit: 'Syihab', total_valuation: 1044440704, total_qty: 5800, average_unit_cost: 180076, percentage: 5.0, color: '#f59e0b' },
-    ];
-
-    const GSK_CATEGORIES: InventoryCategoryValuation[] = [
-      { category_name: 'iPhone Second (HP SECOND)', business_unit: 'GSK Second', total_valuation: 6298597174, total_qty: 1270, average_unit_cost: 4959525, percentage: 62.0, color: '#8b5cf6' },
-      { category_name: 'ECO SECOND (Grade B/C)', business_unit: 'GSK Second', total_valuation: 2234986094, total_qty: 880, average_unit_cost: 2539757, percentage: 22.0, color: '#ec4899' },
-      { category_name: 'Android Second', business_unit: 'GSK Second', total_valuation: 1015902770, total_qty: 590, average_unit_cost: 1721869, percentage: 10.0, color: '#14b8a6' },
-      { category_name: 'Sparepart & Aksesoris Second', business_unit: 'GSK Second', total_valuation: 609541662, total_qty: 3140, average_unit_cost: 194122, percentage: 6.0, color: '#f59e0b' },
-    ];
-
-    const ALL_CATEGORIES: InventoryCategoryValuation[] = [
-      { category_name: 'iPhone Baru Resmi (Syihab)', business_unit: 'Syihab', total_valuation: 13577729150, total_qty: 1520, average_unit_cost: 8932717, percentage: 43.7, color: '#6366f1' },
-      { category_name: 'iPhone Second (GSK Second)', business_unit: 'GSK Second', total_valuation: 6298597174, total_qty: 1270, average_unit_cost: 4959525, percentage: 20.3, color: '#8b5cf6' },
-      { category_name: 'iPad & MacBook Resmi (Syihab)', business_unit: 'Syihab', total_valuation: 3759986534, total_qty: 360, average_unit_cost: 10444407, percentage: 12.1, color: '#3b82f6' },
-      { category_name: 'Android Smartphone (Baru & Second)', business_unit: 'Semua BU', total_valuation: 3522560459, total_qty: 1570, average_unit_cost: 2243669, percentage: 11.3, color: '#10b981' },
-      { category_name: 'ECO SECOND (GSK Second)', business_unit: 'GSK Second', total_valuation: 2234986094, total_qty: 880, average_unit_cost: 2539757, percentage: 7.2, color: '#ec4899' },
-      { category_name: 'Aksesoris & Sparepart', business_unit: 'Semua BU', total_valuation: 1653982366, total_qty: 8940, average_unit_cost: 185009, percentage: 5.4, color: '#f59e0b' },
-    ];
-
-    // Top SKUs
-    const SYIHAB_TOP_ITEMS: InventoryTopValuationItem[] = [
-      { sku: 'IP16PM-256-DS', name: 'iPhone 16 Pro Max 256GB Desert Titanium (Resmi iBox)', category: 'iPhone Baru Resmi (iBox / GDN)', brand: 'Apple', stock_qty: 38, unit_cost: 21850000, total_valuation: 830300000, days_in_inventory: 14, risk_status: 'LOW' },
-      { sku: 'IP15PM-256-NT', name: 'iPhone 15 Pro Max 256GB Natural Titanium (Resmi iBox)', category: 'iPhone Baru Resmi (iBox / GDN)', brand: 'Apple', stock_qty: 32, unit_cost: 18950000, total_valuation: 606400000, days_in_inventory: 28, risk_status: 'LOW' },
-      { sku: 'IP16P-128-BK', name: 'iPhone 16 Pro 128GB Black Titanium (Resmi GDN)', category: 'iPhone Baru Resmi (iBox / GDN)', brand: 'Apple', stock_qty: 28, unit_cost: 17400000, total_valuation: 487200000, days_in_inventory: 21, risk_status: 'LOW' },
-      { sku: 'IP15-128-BL', name: 'iPhone 15 128GB Blue (Resmi iBox)', category: 'iPhone Baru Resmi (iBox / GDN)', brand: 'Apple', stock_qty: 34, unit_cost: 11850000, total_valuation: 402900000, days_in_inventory: 35, risk_status: 'LOW' },
-      { sku: 'SAM-S24U-512', name: 'Samsung Galaxy S24 Ultra 12/512GB Titanium Gray', category: 'Android Smartphone Baru', brand: 'Samsung', stock_qty: 16, unit_cost: 17500000, total_valuation: 280000000, days_in_inventory: 31, risk_status: 'LOW' },
-      { sku: 'IP13-128-MD', name: 'iPhone 13 128GB Midnight (Resmi iBox)', category: 'iPhone Baru Resmi (iBox / GDN)', brand: 'Apple', stock_qty: 30, unit_cost: 8750000, total_valuation: 262500000, days_in_inventory: 42, risk_status: 'MEDIUM' },
-    ];
-
-    const GSK_TOP_ITEMS: InventoryTopValuationItem[] = [
-      { sku: 'IP13-128-SEC', name: 'iPhone 13 128GB Second Mulus Fullset', category: 'iPhone Second (HP SECOND)', brand: 'Apple', stock_qty: 45, unit_cost: 6850000, total_valuation: 308250000, days_in_inventory: 38, risk_status: 'MEDIUM' },
-      { sku: 'IP11-64-SEC', name: 'iPhone 11 64GB Second Ex Inter', category: 'iPhone Second (HP SECOND)', brand: 'Apple', stock_qty: 62, unit_cost: 4150000, total_valuation: 257300000, days_in_inventory: 45, risk_status: 'MEDIUM' },
-      { sku: 'IP12P-128-SEC', name: 'iPhone 12 Pro 128GB Second Mulus', category: 'iPhone Second (HP SECOND)', brand: 'Apple', stock_qty: 30, unit_cost: 7450000, total_valuation: 223500000, days_in_inventory: 68, risk_status: 'HIGH' },
-      { sku: 'IP12-128-SEC', name: 'iPhone 12 128GB Second Ex Resmi', category: 'iPhone Second (HP SECOND)', brand: 'Apple', stock_qty: 34, unit_cost: 5950000, total_valuation: 202300000, days_in_inventory: 52, risk_status: 'MEDIUM' },
-      { sku: 'IPXR-64-ECO', name: 'iPhone XR 64GB Second Eco Grade B', category: 'ECO SECOND (Grade B/C)', brand: 'Apple', stock_qty: 55, unit_cost: 3200000, total_valuation: 176000000, days_in_inventory: 82, risk_status: 'HIGH' },
-      { sku: 'IP14P-128-SEC', name: 'iPhone 14 Pro 128GB Deep Purple Second', category: 'iPhone Second (HP SECOND)', brand: 'Apple', stock_qty: 15, unit_cost: 11200000, total_valuation: 168000000, days_in_inventory: 74, risk_status: 'HIGH' },
-    ];
-
-    const ALL_TOP_ITEMS: InventoryTopValuationItem[] = [
-      ...SYIHAB_TOP_ITEMS.slice(0, 4),
-      ...GSK_TOP_ITEMS.slice(0, 4),
-    ].sort((a, b) => b.total_valuation - a.total_valuation);
-
-    // Active sets based on selected BU
-    let branchBreakdown = isSyihab ? [...SYIHAB_BRANCHES] : isSecond ? [...GSK_BRANCHES] : [...ALL_BRANCHES];
-    let categoryBreakdown = isSyihab ? [...SYIHAB_CATEGORIES] : isSecond ? [...GSK_CATEGORIES] : [...ALL_CATEGORIES];
-    let topItems = isSyihab ? [...SYIHAB_TOP_ITEMS] : isSecond ? [...GSK_TOP_ITEMS] : [...ALL_TOP_ITEMS];
-    const baseValuation = isSyihab ? SYIHAB_TOTAL_VAL : isSecond ? GSK_TOTAL_VAL : COMBINED_TOTAL_VAL;
-
-    // 3. Parse active branch filters
+    // 1. Parse active branch filters
     let activeBranches: string[] = [];
     if (Array.isArray(filters.branch)) {
       activeBranches = filters.branch.map((b) => b.trim().toLowerCase()).filter(Boolean);
@@ -207,7 +115,7 @@ export const InventoryValuationTab: React.FC<InventoryValuationTabProps> = ({ fi
       activeBranches = [filters.branch.trim().toLowerCase()];
     }
 
-    // 4. Parse active category filters
+    // 2. Parse active category filters
     let activeCategories: string[] = [];
     if (Array.isArray(filters.category)) {
       activeCategories = filters.category.map((c) => c.trim().toLowerCase()).filter(Boolean);
@@ -215,8 +123,7 @@ export const InventoryValuationTab: React.FC<InventoryValuationTabProps> = ({ fi
       activeCategories = [filters.category.trim().toLowerCase()];
     }
 
-    // 5. Apply Branch Filter
-    let isBranchFiltered = false;
+    // 3. Apply Branch Filter
     if (activeBranches.length > 0) {
       const matched = branchBreakdown.filter((b) => {
         const wh = (b.warehouse_name || '').toLowerCase();
@@ -232,12 +139,21 @@ export const InventoryValuationTab: React.FC<InventoryValuationTabProps> = ({ fi
 
       if (matched.length > 0) {
         branchBreakdown = matched;
-        isBranchFiltered = true;
+        totalValuation = branchBreakdown.reduce((sum, b) => sum + b.total_valuation, 0);
+        totalUnits = branchBreakdown.reduce((sum, b) => sum + b.total_qty, 0);
+
+        // Recalculate branch percentages relative to the filtered subset
+        branchBreakdown = branchBreakdown.map((b) => ({
+          ...b,
+          percentage:
+            totalValuation > 0
+              ? Number(((b.total_valuation / totalValuation) * 100).toFixed(1))
+              : 0,
+        }));
       }
     }
 
-    // 6. Apply Category Filter
-    let isCategoryFiltered = false;
+    // 4. Apply Category Filter
     if (activeCategories.length > 0) {
       const matchedCats = categoryBreakdown.filter((c) => {
         const catName = (c.category_name || '').toLowerCase();
@@ -248,7 +164,10 @@ export const InventoryValuationTab: React.FC<InventoryValuationTabProps> = ({ fi
 
       if (matchedCats.length > 0) {
         categoryBreakdown = matchedCats;
-        isCategoryFiltered = true;
+        if (activeBranches.length === 0) {
+          totalValuation = categoryBreakdown.reduce((sum, c) => sum + c.total_valuation, 0);
+          totalUnits = categoryBreakdown.reduce((sum, c) => sum + c.total_qty, 0);
+        }
       }
 
       // Filter Top SKU Items by Category
@@ -260,63 +179,15 @@ export const InventoryValuationTab: React.FC<InventoryValuationTabProps> = ({ fi
       });
     }
 
-    // 7. Dynamically Recompute Totals strictly adhering to Accurate Balance
-    let totalValuation = baseValuation;
-    let totalUnits = branchBreakdown.reduce((sum, b) => sum + b.total_qty, 0);
-
-    if (isBranchFiltered) {
-      totalValuation = branchBreakdown.reduce((sum, b) => sum + b.total_valuation, 0);
-      totalUnits = branchBreakdown.reduce((sum, b) => sum + b.total_qty, 0);
-
-      // Recalculate branch percentages relative to the filtered subset
-      branchBreakdown = branchBreakdown.map((b) => ({
-        ...b,
-        percentage:
-          totalValuation > 0
-            ? Number(((b.total_valuation / totalValuation) * 100).toFixed(1))
-            : 0,
-      }));
-
-      // Scale categories proportionally to the filtered branch total
-      const ratio = baseValuation > 0 ? totalValuation / baseValuation : 1;
-      categoryBreakdown = categoryBreakdown.map((c) => ({
-        ...c,
-        total_valuation: Math.round(c.total_valuation * ratio),
-        total_qty: Math.max(1, Math.round(c.total_qty * ratio)),
-      }));
-    } else if (isCategoryFiltered) {
-      totalValuation = categoryBreakdown.reduce((sum, c) => sum + c.total_valuation, 0);
-      totalUnits = categoryBreakdown.reduce((sum, c) => sum + c.total_qty, 0);
-    }
-
     const averageUnitCost =
       totalUnits > 0 ? Math.round(totalValuation / totalUnits) : 0;
 
-    // Recalculate slow-moving capital proportionally
     const slowMovingValuation = Math.round(totalValuation * 0.082);
     const slowMovingQty = Math.round(totalUnits * 0.091);
     const slowMovingPct =
       totalValuation > 0
         ? Number(((slowMovingValuation / totalValuation) * 100).toFixed(1))
         : 8.2;
-
-    const brandBreakdown = isSyihab
-      ? [
-          { brand_name: 'Apple', total_valuation: Math.round(totalValuation * 0.87), total_qty: Math.round(totalUnits * 0.25), percentage: 87.0 },
-          { brand_name: 'Samsung', total_valuation: Math.round(totalValuation * 0.07), total_qty: Math.round(totalUnits * 0.05), percentage: 7.0 },
-          { brand_name: 'Aksesoris Original', total_valuation: Math.round(totalValuation * 0.06), total_qty: Math.round(totalUnits * 0.70), percentage: 6.0 },
-        ]
-      : isSecond
-      ? [
-          { brand_name: 'Apple', total_valuation: Math.round(totalValuation * 0.84), total_qty: Math.round(totalUnits * 0.37), percentage: 84.0 },
-          { brand_name: 'Android (Samsung, Xiaomi)', total_valuation: Math.round(totalValuation * 0.10), total_qty: Math.round(totalUnits * 0.10), percentage: 10.0 },
-          { brand_name: 'Sparepart & Lainnya', total_valuation: Math.round(totalValuation * 0.06), total_qty: Math.round(totalUnits * 0.53), percentage: 6.0 },
-        ]
-      : [
-          { brand_name: 'Apple (Baru & Second)', total_valuation: Math.round(totalValuation * 0.85), total_qty: Math.round(totalUnits * 0.30), percentage: 85.0 },
-          { brand_name: 'Samsung & Android', total_valuation: Math.round(totalValuation * 0.09), total_qty: Math.round(totalUnits * 0.08), percentage: 9.0 },
-          { brand_name: 'Aksesoris & Sparepart', total_valuation: Math.round(totalValuation * 0.06), total_qty: Math.round(totalUnits * 0.62), percentage: 6.0 },
-        ];
 
     return {
       ...data,
@@ -325,7 +196,7 @@ export const InventoryValuationTab: React.FC<InventoryValuationTabProps> = ({ fi
       total_units: totalUnits,
       average_unit_cost: averageUnitCost,
       slow_moving: {
-        threshold_days: data.slow_moving?.threshold_days || 90,
+        threshold_days: data.slow_moving?.threshold_days || 60,
         total_valuation: slowMovingValuation,
         total_qty: slowMovingQty,
         percentage_of_inventory: slowMovingPct,
