@@ -6,6 +6,12 @@ Aplikasi ini dibangun menggunakan arsitektur **Headless / Decoupled** (Vite + Re
 
 ---
 
+## 📚 Dokumentasi Arsitektur & Sumber Data
+* 📘 **[Panduan Lengkap Sumber Data & Endpoint (Database vs Accurate Live)](./PANDUAN_SUMBER_DATA_DASHBOARD.md)**: Panduan resmi asal-usul setiap data di dashboard (Database POS vs Accurate Online API), daftar endpoint, nama tabel, dan respon audit direksi.
+* 📊 **[Dokumentasi Integrasi Keuangan Riil Accurate Online](./DOKUMENTASI_KEUANGAN_ACCURATE.md)**: Detail perhitungan Piutang (AR), Hutang (AP), Kas/Bank, dan Modal Kerja Bersih.
+
+---
+
 ## 🚀 Fitur Utama
 1. **Executive Financial Cards**: Net Sales, Gross Profit, HPP, Margin %, AOV, Transaksi, Piutang Berjalan, dan Realisasi Kas.
 2. **Kesehatan Arus Kas (Cash Flow Health Card)**: Rasio penagihan kas masuk (*Collection Rate %*) vs piutang berjalan dengan status peringatan risiko.
