@@ -55,7 +55,7 @@ export const CategoryBrandCompositionCard: React.FC<CategoryBrandCompositionCard
                 Alokasi Modal per Kategori
               </h3>
             </div>
-            <span className="text-xs text-slate-400">4 Kategori Utama</span>
+            <span className="text-xs text-slate-400">{categories.length} Kategori</span>
           </div>
 
           <div className="space-y-4">
@@ -101,8 +101,8 @@ export const CategoryBrandCompositionCard: React.FC<CategoryBrandCompositionCard
           <span>iPhone Baru & Second mendominasi</span>
           <span className="font-bold text-slate-200">
             {(
-              (categories.find((c) => c.category_name === 'iPhone Baru')?.percentage || 45) +
-              (categories.find((c) => c.category_name === 'iPhone Second')?.percentage || 32)
+              (categories.find((c) => c.category_name.toLowerCase().includes('hp new') || c.category_name.toLowerCase().includes('baru'))?.percentage || 0) +
+              (categories.find((c) => c.category_name.toLowerCase().includes('hp second') || c.category_name.toLowerCase().includes('second'))?.percentage || 0)
             ).toFixed(1)}
             % dari Total Modal
           </span>

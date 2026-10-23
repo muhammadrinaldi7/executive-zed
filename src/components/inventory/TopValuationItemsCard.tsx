@@ -113,11 +113,18 @@ export const TopValuationItemsCard: React.FC<TopValuationItemsCardProps> = ({
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-800/60 font-medium">
-            {items.map((it) => (
-              <tr
-                key={it.sku}
-                className="hover:bg-slate-800/40 transition-colors group"
-              >
+            {items.length === 0 ? (
+              <tr>
+                <td colSpan={6} className="py-8 text-center text-slate-400">
+                  Tidak ada produk dengan modal tertahan untuk filter yang dipilih.
+                </td>
+              </tr>
+            ) : (
+              items.map((it) => (
+                <tr
+                  key={it.sku}
+                  className="hover:bg-slate-800/40 transition-colors group"
+                >
                 <td className="py-3 px-4">
                   <div className="font-semibold text-slate-100 group-hover:text-cyan-300 transition-colors">
                     {it.name}
@@ -145,8 +152,9 @@ export const TopValuationItemsCard: React.FC<TopValuationItemsCardProps> = ({
                   {getRiskBadge(it.risk_status, it.days_in_inventory)}
                 </td>
               </tr>
-            ))}
-          </tbody>
+            ))
+          )}
+        </tbody>
         </table>
       </div>
     </div>

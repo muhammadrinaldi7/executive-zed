@@ -123,7 +123,9 @@ export const DashboardPage: React.FC = () => {
 
         {activeTab === 'financial_accurate' && <AccurateFinancialTab />}
 
-        {activeTab === 'inventory_valuation' && <InventoryValuationTab />}
+        {activeTab === 'inventory_valuation' && (
+          <InventoryValuationTab filterOptions={filterOptions} />
+        )}
 
         {activeTab === 'staff' && <StaffKpiTab />}
 
