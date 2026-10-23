@@ -65,9 +65,22 @@ export const CategoryBrandCompositionCard: React.FC<CategoryBrandCompositionCard
               return (
                 <div key={cat.category_name} className="space-y-1.5 group">
                   <div className="flex items-center justify-between text-xs">
-                    <span className="font-semibold text-slate-200 group-hover:text-indigo-300 transition-colors">
-                      {cat.category_name}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <span className="font-semibold text-slate-200 group-hover:text-indigo-300 transition-colors">
+                        {cat.category_name}
+                      </span>
+                      {cat.business_unit && (
+                        <span
+                          className={`inline-block px-1.5 py-0.5 rounded text-[9px] font-semibold border ${
+                            cat.business_unit.toLowerCase().includes('syihab')
+                              ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30'
+                              : 'bg-indigo-500/15 text-indigo-300 border-indigo-500/30'
+                          }`}
+                        >
+                          {cat.business_unit}
+                        </span>
+                      )}
+                    </div>
                     <div className="flex items-center gap-3">
                       <span className="text-slate-400 font-mono text-[11px]">
                         {formatNumber(cat.total_qty)} unit
@@ -98,11 +111,27 @@ export const CategoryBrandCompositionCard: React.FC<CategoryBrandCompositionCard
         </div>
 
         <div className="mt-5 pt-4 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
-          <span>iPhone Baru & Second mendominasi</span>
+          <span>
+            {categories.some((c) => c.category_name.toLowerCase().includes('baru')) &&
+            !categories.some((c) => c.category_name.toLowerCase().includes('second'))
+              ? 'iPhone Baru Resmi & Ekosistem Apple mendominasi'
+              : !categories.some((c) => c.category_name.toLowerCase().includes('baru')) &&
+                categories.some((c) => c.category_name.toLowerCase().includes('second'))
+              ? 'iPhone Second & ECO Grade mendominasi'
+              : 'iPhone Baru & iPhone Second mendominasi'}
+          </span>
           <span className="font-bold text-slate-200">
             {(
-              (categories.find((c) => c.category_name.toLowerCase().includes('hp new') || c.category_name.toLowerCase().includes('baru'))?.percentage || 0) +
-              (categories.find((c) => c.category_name.toLowerCase().includes('hp second') || c.category_name.toLowerCase().includes('second'))?.percentage || 0)
+              categories
+                .filter((c) => {
+                  const n = c.category_name.toLowerCase();
+                  return n.includes('baru') || n.includes('second') || n.includes('new');
+                })
+                .reduce(
+                  (sum, c) =>
+                    sum + (totalValuation > 0 ? (c.total_valuation / totalValuation) * 100 : c.percentage),
+                  0
+                )
             ).toFixed(1)}
             % dari Total Modal
           </span>

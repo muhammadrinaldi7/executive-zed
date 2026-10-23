@@ -677,6 +677,7 @@ export interface InventoryBranchValuation {
   average_unit_cost: number;
   percentage: number;
   status: 'OPTIMAL' | 'NORMAL' | 'ALERT';
+  business_unit?: string;
 }
 
 export interface InventoryCategoryValuation {
@@ -686,6 +687,7 @@ export interface InventoryCategoryValuation {
   average_unit_cost: number;
   percentage: number;
   color: string;
+  business_unit?: string;
 }
 
 export interface InventoryBrandValuation {

@@ -172,8 +172,21 @@ export const BranchValuationBreakdown: React.FC<BranchValuationBreakdownProps> =
                   className="hover:bg-slate-800/40 transition-colors group"
                 >
                   <td className="py-3 px-4">
-                    <div className="font-semibold text-slate-100 group-hover:text-cyan-300 transition-colors">
-                      {b.warehouse_name}
+                    <div className="flex items-center gap-2">
+                      <span className="font-semibold text-slate-100 group-hover:text-cyan-300 transition-colors">
+                        {b.warehouse_name}
+                      </span>
+                      {b.business_unit && (
+                        <span
+                          className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-semibold border ${
+                            b.business_unit.toLowerCase().includes('syihab')
+                              ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30'
+                              : 'bg-indigo-500/15 text-indigo-300 border-indigo-500/30'
+                          }`}
+                        >
+                          {b.business_unit}
+                        </span>
+                      )}
                     </div>
                     <div className="text-[11px] text-slate-400">
                       Rata-rata HPP: {formatRupiah(b.average_unit_cost)} / unit
