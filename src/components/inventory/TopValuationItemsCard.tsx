@@ -129,8 +129,18 @@ export const TopValuationItemsCard: React.FC<TopValuationItemsCardProps> = ({
                   <div className="font-semibold text-slate-100 group-hover:text-cyan-300 transition-colors">
                     {it.name}
                   </div>
-                  <div className="text-[11px] font-mono text-slate-400">
-                    SKU: {it.sku} &bull; Brand: {it.brand}
+                  <div className="text-[11px] font-mono text-slate-400 flex items-center gap-1.5 flex-wrap">
+                    <span>SKU: {it.sku}</span>
+                    <span>&bull;</span>
+                    <span>Brand: {it.brand}</span>
+                    {it.warehouse_name && (
+                      <>
+                        <span>&bull;</span>
+                        <span className="text-cyan-400 bg-cyan-950/60 px-1.5 py-0.5 rounded text-[10px] border border-cyan-800/40">
+                          {it.warehouse_name}
+                        </span>
+                      </>
+                    )}
                   </div>
                 </td>
                 <td className="py-3 px-3">

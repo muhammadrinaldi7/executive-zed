@@ -170,13 +170,18 @@ export const InventoryValuationTab: React.FC<InventoryValuationTabProps> = ({ fi
         }
       }
 
-      // Filter Top SKU Items by Category
-      topItems = topItems.filter((item) => {
-        const cat = (item.category || '').toLowerCase();
-        return activeCategories.some(
-          (target) => cat.includes(target) || target.includes(cat)
-        );
-      });
+      // Filter Top SKU Items by Category if matching
+      if (topItems.length > 0) {
+        const matchingItems = topItems.filter((item) => {
+          const cat = (item.category || '').toLowerCase();
+          return activeCategories.some(
+            (target) => cat.includes(target) || target.includes(cat)
+          );
+        });
+        if (matchingItems.length > 0) {
+          topItems = matchingItems;
+        }
+      }
     }
 
     const averageUnitCost =

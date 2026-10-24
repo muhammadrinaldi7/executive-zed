@@ -714,6 +714,7 @@ export interface InventoryTopValuationItem {
   total_valuation: number;
   days_in_inventory: number;
   risk_status: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  warehouse_name?: string;
 }
 
 export interface InventoryValuationData {
