@@ -96,103 +96,14 @@ export const InventoryValuationTab: React.FC<InventoryValuationTabProps> = ({ fi
   }, [filters.business_unit_id, filterOptions?.business_units, data?.business_unit]);
 
   // Reactive Client-Side Filter Computation (Dual-layer filter guarantee)
-  // Reactive Client-Side Filter Computation (Directly using live backend API data)
+  // Directly use live backend API data which is reactively queried and filtered by SQL in backend
   const filteredData = useMemo<InventoryValuationData | null>(() => {
     if (!data) return null;
 
-    let branchBreakdown = [...(data.branch_breakdown || [])];
-    let categoryBreakdown = [...(data.category_breakdown || [])];
-    let brandBreakdown = [...(data.brand_breakdown || [])];
-    let topItems = [...(data.top_valuation_items || [])];
-    let totalValuation = data.total_valuation || 0;
-    let totalUnits = data.total_units || 0;
-
-    // 1. Parse active branch filters
-    let activeBranches: string[] = [];
-    if (Array.isArray(filters.branch)) {
-      activeBranches = filters.branch.map((b) => b.trim().toLowerCase()).filter(Boolean);
-    } else if (typeof filters.branch === 'string' && filters.branch.trim() !== '') {
-      activeBranches = [filters.branch.trim().toLowerCase()];
-    }
-
-    // 2. Parse active category filters
-    let activeCategories: string[] = [];
-    if (Array.isArray(filters.category)) {
-      activeCategories = filters.category.map((c) => c.trim().toLowerCase()).filter(Boolean);
-    } else if (typeof filters.category === 'string' && filters.category.trim() !== '') {
-      activeCategories = [filters.category.trim().toLowerCase()];
-    }
-
-    // 3. Apply Branch Filter
-    if (activeBranches.length > 0) {
-      const matched = branchBreakdown.filter((b) => {
-        const wh = (b.warehouse_name || '').toLowerCase();
-        const br = (b.branch_name || '').toLowerCase();
-        return activeBranches.some(
-          (target) =>
-            wh.includes(target) ||
-            br.includes(target) ||
-            target.includes(br) ||
-            target.replace(/^(gsk - |gsk second - |syihab - )/i, '').includes(br)
-        );
-      });
-
-      if (matched.length > 0) {
-        branchBreakdown = matched;
-        totalValuation = branchBreakdown.reduce((sum, b) => sum + b.total_valuation, 0);
-        totalUnits = branchBreakdown.reduce((sum, b) => sum + b.total_qty, 0);
-
-        // Recalculate branch percentages relative to the filtered subset
-        branchBreakdown = branchBreakdown.map((b) => ({
-          ...b,
-          percentage:
-            totalValuation > 0
-              ? Number(((b.total_valuation / totalValuation) * 100).toFixed(1))
-              : 0,
-        }));
-      }
-    }
-
-    // 4. Apply Category Filter
-    if (activeCategories.length > 0) {
-      const matchedCats = categoryBreakdown.filter((c) => {
-        const catName = (c.category_name || '').toLowerCase();
-        return activeCategories.some(
-          (target) => catName.includes(target) || target.includes(catName)
-        );
-      });
-
-      if (matchedCats.length > 0) {
-        categoryBreakdown = matchedCats;
-        if (activeBranches.length === 0) {
-          totalValuation = categoryBreakdown.reduce((sum, c) => sum + c.total_valuation, 0);
-          totalUnits = categoryBreakdown.reduce((sum, c) => sum + c.total_qty, 0);
-        }
-      }
-
-      // Filter Top SKU Items by Category if matching
-      if (topItems.length > 0) {
-        const matchingItems = topItems.filter((item) => {
-          const cat = (item.category || '').toLowerCase();
-          return activeCategories.some(
-            (target) => cat.includes(target) || target.includes(cat)
-          );
-        });
-        if (matchingItems.length > 0) {
-          topItems = matchingItems;
-        }
-      }
-    }
-
+    const totalValuation = data.total_valuation || 0;
+    const totalUnits = data.total_units || 0;
     const averageUnitCost =
-      totalUnits > 0 ? Math.round(totalValuation / totalUnits) : 0;
-
-    const slowMovingValuation = Math.round(totalValuation * 0.082);
-    const slowMovingQty = Math.round(totalUnits * 0.091);
-    const slowMovingPct =
-      totalValuation > 0
-        ? Number(((slowMovingValuation / totalValuation) * 100).toFixed(1))
-        : 8.2;
+      totalUnits > 0 ? Math.round(totalValuation / totalUnits) : (data.average_unit_cost || 0);
 
     return {
       ...data,
@@ -200,24 +111,18 @@ export const InventoryValuationTab: React.FC<InventoryValuationTabProps> = ({ fi
       total_valuation: totalValuation,
       total_units: totalUnits,
       average_unit_cost: averageUnitCost,
-      slow_moving: {
-        threshold_days: data.slow_moving?.threshold_days || 60,
-        total_valuation: slowMovingValuation,
-        total_qty: slowMovingQty,
-        percentage_of_inventory: slowMovingPct,
+      slow_moving: data.slow_moving || {
+        threshold_days: 60,
+        total_valuation: 0,
+        total_qty: 0,
+        percentage_of_inventory: 0,
       },
-      branch_breakdown: branchBreakdown,
-      category_breakdown: categoryBreakdown,
-      brand_breakdown: brandBreakdown,
-      top_valuation_items: topItems,
+      branch_breakdown: data.branch_breakdown || [],
+      category_breakdown: data.category_breakdown || [],
+      brand_breakdown: data.brand_breakdown || [],
+      top_valuation_items: data.top_valuation_items || [],
     };
-  }, [
-    data,
-    filters.branch,
-    filters.category,
-    filters.business_unit_id,
-    activeBuName,
-  ]);
+  }, [data, activeBuName]);
 
   return (
     <div className="space-y-6">
