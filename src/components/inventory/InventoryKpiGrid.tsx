@@ -74,7 +74,7 @@ export const InventoryKpiGrid: React.FC<InventoryKpiGridProps> = ({
           </div>
           <div className="flex items-center gap-1.5 mt-2 text-xs text-slate-400">
             <Scale className="w-3.5 h-3.5 text-cyan-400" />
-            <span>Valuasi Aset Buku Besar Accurate</span>
+            <span>Valuasi Stok Fisik Accurate (Stok × HPP)</span>
           </div>
         </div>
       </div>
