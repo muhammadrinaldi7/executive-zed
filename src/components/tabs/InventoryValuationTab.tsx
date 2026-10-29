@@ -35,6 +35,7 @@ export const InventoryValuationTab: React.FC<InventoryValuationTabProps> = ({ fi
           business_unit_id: filters.business_unit_id,
           branch: filters.branch,
           category: filters.category,
+          project: filters.project,
           as_of_date: asOfDate,
           force_refresh: forceRefresh,
         });
@@ -54,7 +55,7 @@ export const InventoryValuationTab: React.FC<InventoryValuationTabProps> = ({ fi
         setIsLoading(false);
       }
     },
-    [filters.business_unit_id, filters.branch, filters.category, asOfDate]
+    [filters.business_unit_id, filters.branch, filters.category, filters.project, asOfDate]
   );
 
   useEffect(() => {
@@ -134,6 +135,7 @@ export const InventoryValuationTab: React.FC<InventoryValuationTabProps> = ({ fi
         glAccount={filteredData?.gl_account}
         branchFilter={filters.branch}
         categoryFilter={filters.category}
+        projectFilter={filters.project}
         isSyncing={isSyncing}
         onSync={handleForceSync}
       />

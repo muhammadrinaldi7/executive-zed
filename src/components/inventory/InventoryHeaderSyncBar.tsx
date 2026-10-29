@@ -7,6 +7,7 @@ import {
   Layers,
   Building2,
   Tag,
+  FolderKanban,
 } from 'lucide-react';
 import type { InventoryGlAccount } from '../../types';
 
@@ -17,6 +18,7 @@ interface InventoryHeaderSyncBarProps {
   glAccount?: InventoryGlAccount | null;
   branchFilter?: string | string[] | null;
   categoryFilter?: string | string[] | null;
+  projectFilter?: string | string[] | null;
   isSyncing: boolean;
   onSync: () => void;
 }
@@ -28,6 +30,7 @@ export const InventoryHeaderSyncBar: React.FC<InventoryHeaderSyncBarProps> = ({
   glAccount,
   branchFilter,
   categoryFilter,
+  projectFilter,
   isSyncing,
   onSync,
 }) => {
@@ -54,6 +57,10 @@ export const InventoryHeaderSyncBar: React.FC<InventoryHeaderSyncBarProps> = ({
   const categoryLabel = Array.isArray(categoryFilter)
     ? categoryFilter.join(', ')
     : categoryFilter || null;
+
+  const projectLabel = Array.isArray(projectFilter)
+    ? projectFilter.join(', ')
+    : projectFilter || null;
 
   return (
     <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-slate-900 via-cyan-950/40 to-slate-900 border border-cyan-500/20 p-4 sm:p-5 shadow-xl">
@@ -93,6 +100,14 @@ export const InventoryHeaderSyncBar: React.FC<InventoryHeaderSyncBarProps> = ({
               <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-purple-500/15 border border-purple-500/30 text-purple-300">
                 <Tag className="w-3.5 h-3.5 text-purple-400" />
                 Kategori: {categoryLabel}
+              </span>
+            )}
+
+            {/* Active Project Badge */}
+            {projectLabel && (
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/15 border border-emerald-500/30 text-emerald-300">
+                <FolderKanban className="w-3.5 h-3.5 text-emerald-400" />
+                Proyek: {projectLabel}
               </span>
             )}
           </div>

@@ -8,6 +8,7 @@ interface FilterContextType {
   setBusinessUnitId: (buId: string | number | null) => void;
   setBranch: (branch: string | string[] | null) => void;
   setCategory: (category: string | string[] | null) => void;
+  setProject: (project: string | string[] | null) => void;
   setSortBy: (sort: 'revenue' | 'qty') => void;
   refreshKey: number;
   lastRefreshed: Date;
@@ -24,6 +25,7 @@ export const FilterProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     business_unit_id: null,
     branch: null,
     category: null,
+    project: null,
     sort_by: 'revenue',
     limit: 10,
   });
@@ -72,6 +74,7 @@ export const FilterProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       business_unit_id: buId === '' ? null : buId,
       branch: null, // Reset branch when BU changes
       category: null, // Reset category when BU changes
+      project: null, // Reset project when BU changes
     }));
     refreshData();
   };
@@ -96,6 +99,16 @@ export const FilterProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     refreshData();
   };
 
+  const setProject = (project: string | string[] | null) => {
+    setFilters((prev) => ({
+      ...prev,
+      project: Array.isArray(project)
+        ? (project.length === 0 ? null : project)
+        : (project === '' ? null : project),
+    }));
+    refreshData();
+  };
+
   const setSortBy = (sort: 'revenue' | 'qty') => {
     setFilters((prev) => ({
       ...prev,
@@ -113,6 +126,7 @@ export const FilterProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         setBusinessUnitId,
         setBranch,
         setCategory,
+        setProject,
         setSortBy,
         refreshKey,
         lastRefreshed,

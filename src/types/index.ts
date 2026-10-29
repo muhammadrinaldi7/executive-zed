@@ -140,6 +140,8 @@ export interface FilterOptions {
   order_stores: string[];
   categories?: Array<string | CategoryFilterItem>;
   category_names?: string[];
+  projects?: Array<string | CategoryFilterItem>;
+  project_names?: string[];
   date_presets: Array<{ value: string; label: string }>;
 }
 
@@ -165,6 +167,7 @@ export interface FilterParams {
   business_unit_id?: number | string | null;
   branch?: string | string[] | null;
   category?: string | string[] | null;
+  project?: string | string[] | null;
   sort_by?: 'revenue' | 'qty';
   limit?: number;
 }

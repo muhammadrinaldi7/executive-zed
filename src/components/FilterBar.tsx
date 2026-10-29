@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useFilter } from '../context/FilterContext';
 import type { FilterOptions } from '../types';
-import { Calendar, Store, RotateCcw, Building2, Layers, SlidersHorizontal } from 'lucide-react';
+import { Calendar, Store, RotateCcw, Building2, Layers, SlidersHorizontal, FolderKanban } from 'lucide-react';
 import { SearchableSelect, type SelectOption } from './SearchableSelect';
 
 interface FilterBarProps {
@@ -27,6 +27,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({ filterOptions }) => {
     setBranch,
     setBusinessUnitId,
     setCategory,
+    setProject,
   } = useFilter();
 
   const [customStart, setCustomStart] = useState<string>(filters.start_date || '');
@@ -44,6 +45,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({ filterOptions }) => {
     setBranch(null);
     setBusinessUnitId(null);
     setCategory(null);
+    setProject(null);
     setCustomStart('');
     setCustomEnd('');
   };
@@ -56,12 +58,17 @@ export const FilterBar: React.FC<FilterBarProps> = ({ filterOptions }) => {
     filters.category &&
       (Array.isArray(filters.category) ? filters.category.length > 0 : true)
   );
+  const hasProjectFilter = Boolean(
+    filters.project &&
+      (Array.isArray(filters.project) ? filters.project.length > 0 : true)
+  );
 
   const isFiltered =
     filters.date_range !== 'this_month' ||
     hasBranchFilter ||
     filters.business_unit_id !== null ||
-    hasCategoryFilter;
+    hasCategoryFilter ||
+    hasProjectFilter;
 
   // Selected Business Unit ID (numeric or null)
   const selectedBuId = useMemo(() => {
@@ -304,6 +311,145 @@ export const FilterBar: React.FC<FilterBarProps> = ({ filterOptions }) => {
     }
   }, [categoryOptions, filters.category, setCategory]);
 
+  // 4. Project Options for SearchableSelect (Cascaded by selected BU)
+  const projectOptions: SelectOption[] = useMemo(() => {
+    if (!filterOptions) return [];
+
+    const rawProjects =
+      filterOptions.projects && filterOptions.projects.length > 0
+        ? filterOptions.projects
+        : (filterOptions.project_names || []).map((name) => ({
+            name,
+            business_unit_id: null,
+            business_unit_ids: [] as number[],
+            is_all_bu: true,
+          }));
+
+    const totalBuCount = filterOptions.business_units?.length || 2;
+
+    const normalized = rawProjects.map((proj) => {
+      if (typeof proj === 'string') {
+        return {
+          name: proj,
+          business_unit_id: null,
+          business_unit_ids: [] as number[],
+          is_all_bu: true,
+        };
+      }
+      return proj;
+    });
+
+    const groupedMap = new Map<
+      string,
+      {
+        name: string;
+        business_unit_id?: number | null;
+        business_unit_ids: number[];
+        is_all_bu: boolean;
+      }
+    >();
+
+    normalized.forEach((p) => {
+      const trimmed = p.name.trim().toUpperCase();
+      if (!trimmed) return;
+
+      if (!groupedMap.has(trimmed)) {
+        groupedMap.set(trimmed, {
+          name: trimmed,
+          business_unit_id: p.business_unit_id,
+          business_unit_ids: [],
+          is_all_bu: Boolean(p.is_all_bu),
+        });
+      }
+
+      const entry = groupedMap.get(trimmed)!;
+
+      if (p.is_all_bu) {
+        entry.is_all_bu = true;
+      }
+
+      if (p.business_unit_ids && Array.isArray(p.business_unit_ids) && p.business_unit_ids.length > 0) {
+        p.business_unit_ids.forEach((id) => {
+          if (!entry.business_unit_ids.includes(Number(id))) {
+            entry.business_unit_ids.push(Number(id));
+          }
+        });
+      } else if (p.business_unit_id) {
+        const id = Number(p.business_unit_id);
+        if (!entry.business_unit_ids.includes(id)) {
+          entry.business_unit_ids.push(id);
+        }
+      }
+    });
+
+    if (groupedMap.size === 0) {
+      ['SJU', 'SAB', 'RESMI', 'INTER', 'ACCESSORIES', 'NON-PROYEK'].forEach((name) => {
+        groupedMap.set(name, {
+          name,
+          business_unit_id: null,
+          business_unit_ids: [1, 2],
+          is_all_bu: true,
+        });
+      });
+    }
+
+    const filteredProjects = Array.from(groupedMap.values()).filter((p) => {
+      if (selectedBuId === null) return true;
+      if (p.is_all_bu) return true;
+      if (p.business_unit_ids.length === 0) return true;
+      return p.business_unit_ids.includes(selectedBuId);
+    });
+
+    return filteredProjects.map((p) => {
+      const isMultiBu =
+        p.is_all_bu ||
+        p.business_unit_ids.length >= totalBuCount ||
+        (p.business_unit_ids.length === 0 && !p.business_unit_id);
+
+      if (isMultiBu) {
+        return {
+          value: p.name,
+          label: p.name,
+          subLabel: 'Tersedia di Semua Unit Bisnis',
+          badge: '2 BU',
+          badgeClassName: 'bg-indigo-950/70 text-indigo-300 border-indigo-700/60 font-semibold',
+        };
+      }
+
+      const buId = p.business_unit_ids[0] || (p.business_unit_id ? Number(p.business_unit_id) : 1);
+      const bu = filterOptions.business_units?.find((u) => u.id === buId);
+
+      return {
+        value: p.name,
+        label: p.name,
+        subLabel: bu ? `Unit: ${bu.name}` : undefined,
+        badge: bu ? bu.code : '1 BU',
+        badgeClassName: 'bg-slate-800 text-slate-300 border-slate-700 font-medium',
+      };
+    });
+  }, [filterOptions, selectedBuId]);
+
+  // Auto-reset project if currently selected project does not exist in active BU
+  useEffect(() => {
+    if (filters.project && projectOptions.length > 0) {
+      if (Array.isArray(filters.project)) {
+        const validProjects = filters.project.filter((p) =>
+          projectOptions.some((opt) => String(opt.value) === String(p))
+        );
+        if (validProjects.length !== filters.project.length) {
+          setProject(validProjects.length > 0 ? validProjects : null);
+        }
+      } else {
+        const isValid = projectOptions.some(
+          (opt) => String(opt.value) === String(filters.project)
+        );
+        if (!isValid) {
+          setProject(null);
+        }
+      }
+    }
+  }, [projectOptions, filters.project, setProject]);
+
   return (
     <div className="no-print w-full bg-slate-900/90 border-b border-slate-800/80 py-3 px-3 sm:px-6 lg:px-8 backdrop-blur-md relative z-30 shadow-md">
       <div className="max-w-7xl mx-auto flex flex-col gap-2.5 w-full min-w-0">
@@ -403,7 +549,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({ filterOptions }) => {
             </div>
 
             {/* 3. Product Category Filter (Multi-Select Searchable, Cascaded by BU) */}
-            <div className="w-full sm:w-[210px] md:w-[230px] shrink-0">
+            <div className="w-full sm:w-[210px] md:w-[220px] shrink-0">
               <SearchableSelect
                 isMulti={true}
                 value={filters.category}
@@ -415,11 +561,24 @@ export const FilterBar: React.FC<FilterBarProps> = ({ filterOptions }) => {
               />
             </div>
 
+            {/* 4. Project Filter (Multi-Select Searchable, Cascaded by BU) */}
+            <div className="w-full sm:w-[200px] md:w-[210px] shrink-0">
+              <SearchableSelect
+                isMulti={true}
+                value={filters.project}
+                onChange={(val) => setProject(val)}
+                options={projectOptions}
+                allOptionLabel="Semua Proyek"
+                placeholder="Pilih Proyek..."
+                icon={<FolderKanban className="w-3.5 h-3.5" />}
+              />
+            </div>
+
             {/* Reset Filters Button */}
             {isFiltered && (
               <button
                 onClick={handleResetFilters}
-                title="Kembalikan filter ke Bulan Ini (Semua BU, Cabang & Kategori)"
+                title="Kembalikan filter ke Bulan Ini (Semua BU, Cabang, Kategori & Proyek)"
                 className="flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30 hover:border-rose-500/50 transition-colors cursor-pointer shrink-0"
               >
                 <RotateCcw className="w-3.5 h-3.5 text-rose-400" />
@@ -432,7 +591,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({ filterOptions }) => {
           {isFiltered && (
             <div className="hidden xl:flex items-center gap-2 text-[11px] text-indigo-300 bg-indigo-950/50 border border-indigo-800/50 px-3 py-1 rounded-full shrink-0">
               <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse"></span>
-              <span className="truncate max-w-[320px]">
+              <span className="truncate max-w-[360px]">
                 {selectedBu ? selectedBu.name : 'Semua BU'}
                 {filters.branch
                   ? ` • ${
@@ -446,6 +605,13 @@ export const FilterBar: React.FC<FilterBarProps> = ({ filterOptions }) => {
                       Array.isArray(filters.category)
                         ? `${filters.category.length} Kategori`
                         : filters.category
+                    }`
+                  : ''}
+                {filters.project
+                  ? ` • ${
+                      Array.isArray(filters.project)
+                        ? `${filters.project.length} Proyek`
+                        : filters.project
                     }`
                   : ''}
               </span>

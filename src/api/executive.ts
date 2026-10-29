@@ -332,6 +332,7 @@ export const executiveApi = {
     business_unit_id?: number | string | null;
     branch?: string | string[] | null;
     category?: string | string[] | null;
+    project?: string | string[] | null;
     force_refresh?: boolean;
   }) {
     const response = await apiClient.get<ApiResponse<InventoryValuationData>>(
