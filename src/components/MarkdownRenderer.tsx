@@ -10,7 +10,10 @@ interface MarkdownRendererProps {
 export const normalizeMarkdown = (text: string): string => {
   if (!text) return '';
 
-  const rawLines = text.split('\n');
+  // Step 0: Pre-process collapsed row separators and glued rows
+  let preprocessed = text.replace(/\|\s*\|\s*(?=[*#\-[0-9A-Za-z])/g, '|\n| ');
+
+  const rawLines = preprocessed.split('\n');
   const processedLines: string[] = [];
   let inCodeBlock = false;
 
@@ -29,11 +32,19 @@ export const normalizeMarkdown = (text: string): string => {
       continue;
     }
 
+    // Step 0.5: If line is a bullet item erroneously wrapped in pipes like "| * Handphone: Rp ... |"
+    // Convert it to clean, readable bullet points instead of broken pseudo-table
+    if (/^\|\s*[\*\-]\s*(.+?)\s*\|$/.test(trimmed)) {
+      const inner = trimmed.replace(/^\|\s*[\*\-]\s*/, '').replace(/\s*\|$/, '');
+      const cleanInner = inner.replace(/\s*\|\s*/g, ' — ');
+      processedLines.push(`- ${cleanInner}`);
+      continue;
+    }
+
     // Step 1: Clean up multi-pipe artifacts at the very beginning of lines (e.g. "|| iPhone 17" -> "| iPhone 17")
     line = line.replace(/^\|{2,}\s*/g, '| ');
 
     // Step 2: Convert collapsed row separators into proper line breaks
-    // When LLM glues rows together like: "... | | | iPhone 15 ..." or "... ||| iPhone 15 ..."
     line = line.replace(/\|\s*\|\s*\|\s*/g, '|\n| ');
     line = line.replace(/\|\s*\|\s*([0-9A-Za-z#\-\:\*\—\–\w])/g, '|\n| $1');
     line = line.replace(/\|{2,}\s*/g, '|\n| ');
@@ -42,8 +53,14 @@ export const normalizeMarkdown = (text: string): string => {
     const subLines = line.split('\n');
     for (const sub of subLines) {
       let subTrimmed = sub.trim();
-      // If line has pipes and looks like a table row (not a quote or heading)
-      if (subTrimmed.includes('|') && !subTrimmed.startsWith('>') && !subTrimmed.startsWith('#')) {
+      const isBulletOrHeading =
+        subTrimmed.startsWith('- ') ||
+        subTrimmed.startsWith('* ') ||
+        subTrimmed.startsWith('> ') ||
+        subTrimmed.startsWith('#');
+
+      // If line has pipes and looks like a table row (and NOT a bullet list, quote, or heading)
+      if (subTrimmed.includes('|') && !isBulletOrHeading) {
         if (!subTrimmed.startsWith('|')) {
           subTrimmed = '| ' + subTrimmed;
         }
@@ -55,9 +72,11 @@ export const normalizeMarkdown = (text: string): string => {
     }
   }
 
-  // Step 3: Ensure blank line before table start, and NO blank lines inside table
+  // Step 3: Ensure blank line before table start, auto-generate separator if omitted, and NO blank lines inside table
   const finalLines: string[] = [];
   let inTable = false;
+  let tableRowCount = 0;
+  let firstTableRow = '';
   inCodeBlock = false;
 
   for (let i = 0; i < processedLines.length; i++) {
@@ -76,6 +95,7 @@ export const normalizeMarkdown = (text: string): string => {
     }
 
     const isTableRow = trimmed.startsWith('|') && trimmed.endsWith('|') && trimmed.length > 2;
+    const isSeparatorRow = isTableRow && /^\|(?:\s*:?-{2,}:?\s*\|)+$/.test(trimmed);
 
     if (isTableRow) {
       if (!inTable) {
@@ -84,7 +104,18 @@ export const normalizeMarkdown = (text: string): string => {
           finalLines.push('');
         }
         inTable = true;
+        tableRowCount = 0;
+        firstTableRow = trimmed;
       }
+      tableRowCount++;
+
+      // If on row 2 and it's NOT a separator row, synthesize separator so GFM parser turns it into a real HTML <table>
+      if (tableRowCount === 2 && !isSeparatorRow) {
+        const colCount = Math.max(1, firstTableRow.split('|').length - 2);
+        const autoSep = '|' + Array(colCount).fill('---').join('|') + '|';
+        finalLines.push(autoSep);
+      }
+
       finalLines.push(trimmed);
     } else {
       if (inTable && trimmed === '') {

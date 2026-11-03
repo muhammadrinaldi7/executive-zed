@@ -124,15 +124,169 @@ export const executiveApi = {
   },
 
   /**
-   * Send prompt to 9router AI Assistant with live context.
+   * Send prompt to Executive AI Assistant with server-verified active tab & filters.
    */
-  async sendAiChat(message: string, sessionId?: string, contextData?: Record<string, unknown>) {
-    const response = await apiClient.post<ApiResponse<AiChatResponse>>('/ai/chat', {
-      message,
-      session_id: sessionId,
-      context_data: contextData,
-    });
+  async sendAiChat(
+    message: string,
+    sessionId?: string,
+    options?: {
+      activeTab?: string;
+      activeFilters?: FilterParams | Record<string, unknown>;
+      signal?: AbortSignal;
+    }
+  ) {
+    const response = await apiClient.post<ApiResponse<AiChatResponse>>(
+      '/ai/chat',
+      {
+        message,
+        session_id: sessionId,
+        active_tab: options?.activeTab || 'overview',
+        active_filters: options?.activeFilters || {},
+      },
+      { signal: options?.signal }
+    );
     return response.data;
+  },
+
+  /**
+   * Stream real-time AI Assistant response via SSE (with automatic fallback to standard JSON endpoint).
+   */
+  async streamAiChat(params: {
+    message: string;
+    sessionId: string;
+    activeTab?: string;
+    activeFilters?: FilterParams | Record<string, unknown>;
+    signal?: AbortSignal;
+    onStatus?: (statusText: string) => void;
+    onDelta?: (deltaText: string) => void;
+  }): Promise<{ reply: string; created_at?: string; session_id: string }> {
+    const baseUrl = (apiClient.defaults.baseURL || '/api/v1/executive').replace(/\/$/, '');
+    const token = localStorage.getItem('executive_token');
+
+    try {
+      const response = await fetch(`${baseUrl}/ai/chat/stream`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'text/event-stream, application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({
+          message: params.message,
+          session_id: params.sessionId,
+          active_tab: params.activeTab || 'overview',
+          active_filters: params.activeFilters || {},
+        }),
+        signal: params.signal,
+      });
+
+      if (response.status === 401) {
+        localStorage.removeItem('executive_token');
+        localStorage.removeItem('executive_user');
+        window.dispatchEvent(new Event('executive:unauthorized'));
+        throw new Error('Sesi autentikasi berakhir. Silakan login kembali.');
+      }
+
+      // Fallback seamlessly if server has not yet deployed /ai/chat/stream (404/405)
+      if (response.status === 404 || response.status === 405) {
+        params.onStatus?.('Memproses analisis terverifikasi server...');
+        const fallback = await this.sendAiChat(params.message, params.sessionId, {
+          activeTab: params.activeTab,
+          activeFilters: params.activeFilters,
+          signal: params.signal,
+        });
+        if (!fallback.success || !fallback.data) {
+          throw new Error(fallback.message || 'Layanan Asisten Eksekutif sedang sibuk.');
+        }
+        params.onDelta?.(fallback.data.reply);
+        return fallback.data;
+      }
+
+      if (!response.ok) {
+        if (response.status === 429) {
+          throw new Error('Batas frekuensi permintaan AI tercapai. Mohon tunggu beberapa detik sebelum mengirim lagi.');
+        }
+        let errMessage = 'Layanan Asisten Eksekutif sedang sibuk. Silakan coba sesaat lagi.';
+        try {
+          const errJson = await response.json();
+          if (errJson?.message) errMessage = errJson.message;
+        } catch {
+          // Ignore non-JSON error body
+        }
+        throw new Error(errMessage);
+      }
+
+      const contentType = response.headers.get('content-type') || '';
+      if (!contentType.includes('text/event-stream') || !response.body) {
+        const json = (await response.json()) as ApiResponse<AiChatResponse>;
+        if (!json.success || !json.data) {
+          throw new Error(json.message || 'Gagal memproses respons AI.');
+        }
+        params.onDelta?.(json.data.reply);
+        return json.data;
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder('utf-8');
+      let buffer = '';
+      let accumulatedReply = '';
+      let finalCreatedAt: string | undefined;
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        let newlineIdx: number;
+
+        while ((newlineIdx = buffer.indexOf('\n')) !== -1) {
+          const line = buffer.slice(0, newlineIdx).trim();
+          buffer = buffer.slice(newlineIdx + 1);
+
+          if (!line.startsWith('data:')) continue;
+          const payloadStr = line.slice(5).trim();
+          if (!payloadStr || payloadStr === '[DONE]') continue;
+
+          let evt: {
+            type?: string;
+            text?: string;
+            reply?: string;
+            message?: string;
+            created_at?: string;
+          };
+          try {
+            evt = JSON.parse(payloadStr);
+          } catch {
+            continue;
+          }
+
+          if (evt.type === 'status' && evt.text) {
+            params.onStatus?.(evt.text);
+          } else if (evt.type === 'delta' && evt.text) {
+            accumulatedReply += evt.text;
+            params.onDelta?.(evt.text);
+          } else if (evt.type === 'done') {
+            if (evt.reply) {
+              accumulatedReply = evt.reply;
+            }
+            finalCreatedAt = evt.created_at;
+          } else if (evt.type === 'error') {
+            throw new Error(evt.message || 'Terjadi gangguan saat memproses analisis AI.');
+          }
+        }
+      }
+
+      return {
+        reply: accumulatedReply,
+        created_at: finalCreatedAt || new Date().toISOString(),
+        session_id: params.sessionId,
+      };
+    } catch (err) {
+      if ((err as Error)?.name === 'AbortError' || params.signal?.aborted) {
+        throw err;
+      }
+      throw err;
+    }
   },
 
   /**
@@ -146,12 +300,20 @@ export const executiveApi = {
   },
 
   /**
-   * Generate 1-click executive summary from current dashboard snapshot.
+   * Generate 1-click executive summary strictly grounded in active server-side filters.
    */
-  async getAiSummary(contextData: Record<string, unknown>) {
-    const response = await apiClient.post<ApiResponse<AiChatResponse>>('/ai/summarize', {
-      context_data: contextData,
-    });
+  async getAiSummary(
+    activeFilters: FilterParams | Record<string, unknown>,
+    signal?: AbortSignal
+  ) {
+    const response = await apiClient.post<ApiResponse<AiChatResponse>>(
+      '/ai/summarize',
+      {
+        active_filters: activeFilters,
+        context_data: { active_filters: activeFilters },
+      },
+      { signal }
+    );
     return response.data;
   },
 
